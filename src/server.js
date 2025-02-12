@@ -6,6 +6,7 @@ const { app } = require("./config/socket.config.js");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 const logger = require("./logger");
+const locationRoutes = require("./routes/locationRoutes.js"); // Import route location
 class App {
   setup = async () => {
     //config cors
@@ -51,7 +52,7 @@ class App {
       error.error_code = "NOT_FOUND";
       next(error);
     });
-
+  
     // hàm quản lí lỗi
     app.use((error, req, res, next) => {
       const resMessage = `${error.status} - ${Date.now() - req.now}ms - ${

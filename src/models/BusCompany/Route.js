@@ -10,7 +10,6 @@ const routeSchema = new Schema({
     routeStartTime: { type: Date, default: null },
     busCompany: { type: Schema.Types.ObjectId, ref: 'BusCompany', default: null },
     car: { type: Schema.Types.ObjectId, ref: 'Car', default: null },
-    driver: { type: Schema.Types.ObjectId, ref: 'Driver', default: null },
     endLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
     startLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
     services: [{ type: Schema.Types.ObjectId, ref: 'Service' }]
