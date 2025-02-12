@@ -1,8 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const homeRoutes = require('./homeRoutes');
-
-router.use('/home', homeRoutes);
+router.use("/auth", require("./auth.router"));
 
 module.exports = router;

@@ -20,5 +20,4 @@ const pro = {
 }
 const config = {dev,pro}
 const env = process.env.NODE_ENV || 'dev'
-console.log(config[env]);
 module.exports = config[env]
