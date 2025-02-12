@@ -6,6 +6,7 @@ const { app } = require("./config/socket.config.js");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 const logger = require("./logger");
+const locationRoutes = require("./routes/locationRoutes.js"); // Import route location
 class App {
   setup = async () => {
     //config cors
@@ -45,16 +46,18 @@ class App {
     // app.use("/v1/api", require("./routes"));
 
     // app.use("/v1/admin", require("./routes/admin"));
-
+    app.use("/api/locations", locationRoutes);
     //handle Error
     app.use((req, res, next) => {
       const error = new Error("Not Found");
       error.status = 404;
       next(error);
     });
-
+  
     // hàm quản lí lỗi
     app.use((error, req, res) => {
+      console.log(code);
+      
       const resMessage = `${error.status} - ${Date.now() - req.now}ms - ${
         error.message
       }`;
