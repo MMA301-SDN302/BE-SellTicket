@@ -42,22 +42,19 @@ class App {
       next();
     });
 
-    //init routes
-    // app.use("/v1/api", require("./routes"));
+    // init routes
+    app.use("/v1/api", require("./routes"));
 
-    // app.use("/v1/admin", require("./routes/admin"));
-    app.use("/api/locations", locationRoutes);
     //handle Error
     app.use((req, res, next) => {
       const error = new Error("Not Found");
       error.status = 404;
+      error.error_code = "NOT_FOUND";
       next(error);
     });
   
     // hàm quản lí lỗi
-    app.use((error, req, res) => {
-      console.log(code);
-      
+    app.use((error, req, res, next) => {
       const resMessage = `${error.status} - ${Date.now() - req.now}ms - ${
         error.message
       }`;
@@ -76,14 +73,16 @@ class App {
         return res.status(statusCode).json({
           status: "error",
           code: statusCode,
+          error_code: error.error_code,
           message: error.message || "Internal Server Error",
         });
       } else {
         return res.status(statusCode).json({
           status: "error",
           code: statusCode,
-          stack: error.stack,
+          error_code: error.error_code,
           message: error.message,
+          stack: error.stack,
         });
       }
     });

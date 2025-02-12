@@ -1,5 +1,5 @@
 "use strict";
-
+const logger = require("../../logger");
 const {
   ReasonPhrases,
   StatusCodes,
@@ -13,11 +13,21 @@ class SuccessResponse {
     metadata = {},
   }) {
     this.message = !message ? reasonStatusCode : message;
-    this.statusCode = statusCode;
+    this.code = statusCode;
+    this.status = "Success";
     this.metadata = metadata;
   }
-  send(res, headers = {}) {
-    return res.status(this.statusCode).json(this);
+  send(req, res) {
+    logger.log(`Success with code : ${this.code}`, [
+      req.path,
+      { requestId: req.traceId },
+      this,
+    ]);
+    ///delete metadata if empty
+    if (Object.keys(this.metadata).length === 0) {
+      delete this.metadata;
+    }
+    return res.status(this.code).json(this);
   }
 }
 

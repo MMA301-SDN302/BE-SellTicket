@@ -1,10 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-locationRoutes = require("./locationRoutes.js");
 
-const homeRoutes = require('./homeRoutes.js');
-
-router.use('/home', homeRoutes);
-router.use("/locations", locationRoutes);
+router.use("/auth", require("./auth.router"));
+router.use("/locations", require("./locationRoutes"));
 
 module.exports = router;
