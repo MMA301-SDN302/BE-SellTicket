@@ -1,4 +1,4 @@
-import * as service from "../services/locationService.js";
+import * as service from "../services/location.service.js";
 import { OK, CREATED } from "../core/response/success.response.js";
 import {
   NotFoundError,
@@ -11,7 +11,7 @@ export const getAllLocations = async (req, res) => {
     return new OK({
       message: "Location retrieved successfully",
       metadata: locations,
-    }).send(res);
+    }).send(req,res);
 };
 
 export const getLocationById = async (req, res) => {
