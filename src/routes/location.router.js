@@ -1,5 +1,5 @@
 const express = require("express");
-const  controller = require("../controller/locationController.js");
+const  controller = require("../controller/location.controller.js");
 
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
