@@ -6,7 +6,7 @@ const { app } = require("./config/socket.config.js");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 const logger = require("./logger");
-const locationRoutes = require("./routes/locationRoutes.js"); // Import route location
+const locationRoutes = require("./routes/location.router.js"); // Import route location
 class App {
   setup = async () => {
     //config cors

@@ -6,12 +6,7 @@ const carSchema = new Schema({
     car_id: { type: Number, required: true, unique: true },
     car_code: { type: String, default: null },
     amount_seat: { type: Number, required: true },
-    car_img_url1: { type: String, default: null },
-    car_img_url2: { type: String, default: null },
-    car_img_url3: { type: String, default: null },
-    car_img_url4: { type: String, default: null },
-    car_img_url5: { type: String, default: null },
-    car_img_url6: { type: String, default: null },
+    car_img_url: { type: String, default: null },
     car_manufacturer: { type: String, default: null },
     bus_company_id: { type: mongoose.Schema.Types.ObjectId, ref: 'BusCompany', default: null }
 }, {
