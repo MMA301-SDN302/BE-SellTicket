@@ -9,5 +9,6 @@ router.get("/", asyncHandler(controller.getAllTickets));
 router.get("/:id", asyncHandler(controller.getTicketById));
 router.post("/", asyncHandler(controller.createTicket));
 router.delete("/:id", asyncHandler(controller.cancelTicket));
+router.get("/sold-this-month", asyncHandler(controller.getSoldTicketsThisMonth));
 
 module.exports = router;
