@@ -5,10 +5,15 @@ const addUser = async (user) => {
 };
 
 const isExistUser = async (mobilePhone) => {
-  return await User.findOne({ mobilePhone });
+  return await User.findOne({ mobilePhone }).lean();
+};
+
+const findUserByPhoneNumber = async (phoneNumber) => {
+  return await User.findOne({ mobilePhone: phoneNumber }).lean();
 };
 
 module.exports = {
   addUser,
   isExistUser,
+  findUserByPhoneNumber,
 };

@@ -1,14 +1,18 @@
-const { CREATED } = require("../core/response/success.response");
+const { CREATED, OK } = require("../core/response/success.response");
 const logger = require("../logger");
-const { signUp, verifyOtp } = require("../services/auth.service");
+const { signUp, verifyOtp, login } = require("../services/auth.service");
 
 class AuthController {
   login = async (req, res) => {
-    logger.log("AuthController.login", [
-      req.path,
+    logger.log("AuthController", [
+      "Login",
       { requestId: req.traceId },
       req.body,
     ]);
+    return new OK({
+      message: "login success",
+      metadata: await login({ ...req.body, traceId: req.traceId }),
+    }).send(req, res);
   };
   logout = async (req, res) => {};
 
@@ -40,6 +44,9 @@ class AuthController {
       metadata: await verifyOtp({ ...req.body, traceId: req.traceId }),
     }).send(req, res);
   };
+
+
+
 }
 
 module.exports = new AuthController();

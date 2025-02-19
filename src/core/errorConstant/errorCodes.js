@@ -9,6 +9,8 @@ const ERROR_CODES = {
   INVALID_OTP: "INVALID_OTP", // OTP không đúng
   INVALID_CREDENTIALS: "INVALID_CREDENTIALS", // Thông tin đăng nhập không hợp lệ
   UNAUTHORIZED: "UNAUTHORIZED", // Không có quyền truy cập
+  FORBIDDEN: "FORBIDDEN", // Bị cấm truy cập
+  JWT_EXPIRED: "JWT_EXPIRED", // JWT hết hạn
 
   // Lỗi liên quan đến dữ liệu trùng lặp
   DUPLICATE_ENTRY: "DUPLICATE_ENTRY", // Dữ liệu đã tồn tại

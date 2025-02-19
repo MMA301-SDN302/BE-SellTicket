@@ -34,7 +34,8 @@ const sendSMS = async (phones, content) => {
 };
 
 const sendOTP = async (phones, otp) => {
-  const content = `Ma xac thuc FastTicket cua ban la: ${otp}`;
+  const hash = process.env.SMS_HASH;
+  const content = `Ma xac thuc FastTicket cua ban la: ${otp} . Vui long khong chia se ma nay voi bat ky ai. Cam on ban da su dung dich vu cua chung toi !!! ${hash}`;
   return await sendSMS([phones], content);
 };
 
