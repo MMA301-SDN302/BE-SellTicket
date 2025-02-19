@@ -1,36 +1,37 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
-
-const ticketSchema = new Schema({
+const ticketSchema = new mongoose.Schema(
+  {
     ticket_id: {
-        type: Number,
-        required: true,
-        unique: true,
-        autoIncrement: true
+      type: Number,
+      required: true,
+      unique: true,
     },
     ticket_price: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     ticket_seat: {
-        type: String,
-        default: null
+      type: String,
+      default: null,
     },
     ticket_status: {
-        type: String,
-        default: null
+      type: String,
+      enum: ["pending", "confirmed", "cancelled"],
+      default: "pending",
     },
-    route_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'Route',
-        default: null
-    }
-}, {
-    collection: 'ticket',
-    autoIndex: false
-});
+    trip_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Trip",
+      required: true, 
+    },
+  },
+  {
+    collection: "ticket",
+    timestamps: true, 
+  }
+);
 
-const Ticket = mongoose.model('Ticket', ticketSchema);
+const Ticket = mongoose.model("Ticket", ticketSchema);
 
 module.exports = Ticket;

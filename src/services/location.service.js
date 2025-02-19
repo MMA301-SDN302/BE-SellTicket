@@ -1,4 +1,4 @@
-const locationRepository = require("../repository/locationRepository.js");
+const locationRepository = require("../repository/location.repo.js");
 
 const getAllLocations = async () => {
   return await locationRepository.getAllLocations();
