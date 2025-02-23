@@ -5,13 +5,15 @@ const Schema = mongoose.Schema;
 const routeSchema = new Schema({
     isDaily: { type: Boolean, required: true },
     policy: { type: String, default: null },
-    routeDescription: { type: String, default: null },
-    routeEndTime: { type: Date, default: null },
-    routeStartTime: { type: Date, default: null },
-    busCompany: { type: Schema.Types.ObjectId, ref: 'BusCompany', default: null },
     car: { type: Schema.Types.ObjectId, ref: 'Car', default: null },
-    endLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
+    name: { type: String, required: true },
+    routeDescription: { type: String, default: null },
+    routeStartTime: { type: Date, default: null },
+    routeEndTime: { type: Date, default: null },
     startLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
+    endLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
+    price: { type: Number, required: true },
+    remainingSeat:  { type: Number, required: true, default: null },
 }, {
     timestamps: true
 });
