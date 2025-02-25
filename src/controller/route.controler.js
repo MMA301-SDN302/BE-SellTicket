@@ -58,6 +58,7 @@ export const getSearchRoutes = async (req, res) => {
     const date = decodeURIComponent(req.query.date);
     const cars = await service.getCarByRoute(startLocation, endLocation, date);
     return res.status(200).json({ status: "success", data: cars });
+    // return new OK({ message: "Route search result OK", metadata: cars }).send(req, res);
   } catch (error) {
     return res.status(500).json({
       status: "error",
