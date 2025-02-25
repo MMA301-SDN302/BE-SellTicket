@@ -49,3 +49,21 @@ export const deleteRoute = async (req, res) => {
 
   return new OK({ message: "Route deleted successfully" }).send(res);
 };
+
+
+export const getSearchRoutes = async (req, res) => {
+  try {
+    const startLocation = decodeURIComponent(req.query.startLocation);
+    const endLocation = decodeURIComponent(req.query.endLocation);
+    const date = decodeURIComponent(req.query.date);
+    const cars = await service.getCarByRoute(startLocation, endLocation, date);
+    // return res.status(200).json({ status: "success", data: cars });
+    return new OK({ message: "Route search result OK", metadata: cars }).send(req, res);
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      code: 500,
+      message: error.message,
+    });
+  }
+};

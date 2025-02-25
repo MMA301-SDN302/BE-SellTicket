@@ -20,9 +20,9 @@ const ticketSchema = new mongoose.Schema(
       enum: ["pending", "confirmed", "cancelled"],
       default: "pending",
     },
-    trip_id: {
+    route_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Trip",
+      ref: "Route",
       required: true, 
     },
   },

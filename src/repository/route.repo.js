@@ -1,5 +1,6 @@
 const Route = require("../models/BusCompany/Route");
-
+const Location = require("../models/BusCompany/Location")
+const Car = require("../models/BusCompany/Car")
 const getAllRoutes = async () => {
   return await Route.find()
     .populate("busCompany")
