@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     },
     sex: {
       type: String,
-      enum: ["Male", "Female"],
+      enum: ["Male", "Female", "Other"],
       default: null,
     },
     dateOfBirth: {
@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    avatar: {
+      type: String,
+      default: null,
     },
     status: {
       type: String,

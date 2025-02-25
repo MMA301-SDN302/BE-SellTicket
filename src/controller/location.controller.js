@@ -1,11 +1,11 @@
-import * as service from "../services/location.service.js";
-import { OK, CREATED } from "../core/response/success.response.js";
+const service = require("../services/location.service.js");
+const { OK, CREATED } = require("../core/response/success.response.js");
 const {
   NotFoundError,
   BadRequestError,
 } = require("../core/response/error.response.js");
 
-export const getAllLocations = async (req, res) => {
+const getAllLocations = async (req, res) => {
   const locations = await service.getAllLocations();
   return new OK({
     message: "Location retrieved successfully",
@@ -21,7 +21,7 @@ const getLocationById = async (req, res) => {
   return new OK({
     message: "Location retrieved successfully",
     metadata: location,
-  }).send(res);
+  }).send(req, res);
 };
 
 const createLocation = async (req, res) => {
@@ -30,7 +30,7 @@ const createLocation = async (req, res) => {
   return new CREATED({
     message: "Location created successfully",
     metadata: newLocation,
-  }).send(res);
+  }).send(req, res);
 };
 
 const updateLocation = async (req, res) => {
@@ -39,13 +39,13 @@ const updateLocation = async (req, res) => {
   return new OK({
     message: "Location updated successfully",
     metadata: updatedLocation,
-  }).send(res);
+  }).send(req, res);
 };
 
 const deleteLocation = async (req, res) => {
   const deletedLocation = await service.deleteLocation(req.params.id);
   if (!deletedLocation) throw new NotFoundError("Location not found");
-  return new OK({ message: "Location deleted successfully" }).send(res);
+  return new OK({ message: "Location deleted successfully" }).send(req, res);
 };
 
 module.exports = {
