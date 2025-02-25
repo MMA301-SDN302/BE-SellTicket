@@ -21,10 +21,23 @@ const generateToken = (payload, secret) => {
 const verifyToken = (token, secret) => {
   return jwt.verify(token, secret);
 };
+
+const generateJwtToken = (payload, expiresIn) => {
+  const secret = process.env.JWT_SECRET;
+  return jwt.sign(payload, secret, { expiresIn });
+};
+
+const verifyJwtToken = async (token , callback = () => {}) => {
+  const secret = process.env.JWT_SECRET;
+  return jwt.verify(token, secret , callback);
+};
+
 module.exports = {
   hashPassword,
   comparePassword,
   genOtpNumber,
   generateToken,
   verifyToken,
+  generateJwtToken,
+  verifyJwtToken,
 };

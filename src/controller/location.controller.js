@@ -1,11 +1,15 @@
-import * as service from "../services/location.service.js";
-import { OK, CREATED } from "../core/response/success.response.js";
-import {
+const service = require("../services/location.service.js");
+const { OK, CREATED } = require("../core/response/success.response.js");
+const {
   NotFoundError,
   BadRequestError,
-} from "../core/response/error.response.js";
+} = require("../core/response/error.response.js");
 
+<<<<<<< HEAD
 export const getAllLocations = async (req, res) => {
+=======
+const getAllLocations = async (req, res) => {
+>>>>>>> f5c7c481934793760027da920902a3f951c9af59
   const locations = await service.getAllLocations();
   return new OK({
     message: "Location retrieved successfully",
@@ -13,8 +17,13 @@ export const getAllLocations = async (req, res) => {
   }).send(req, res);
 };
 
+<<<<<<< HEAD
 export const getLocationById = async (req, res) => {
   const location = await service.getLocationById(req.params._id); // Sử dụng _id trong params
+=======
+const getLocationById = async (req, res) => {
+  const location = await service.getLocationById(req.params.id);
+>>>>>>> f5c7c481934793760027da920902a3f951c9af59
   if (!location) {
     throw new NotFoundError();
   }

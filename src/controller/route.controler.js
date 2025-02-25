@@ -1,11 +1,20 @@
+<<<<<<< HEAD
 import * as service from "../services/route.service.js";
 import { OK, CREATED } from "../core/response/success.response.js";
 import {
   NotFoundError,
   BadRequestError,
 } from "../core/response/error.response.js";
+=======
+const service = require("../services/route.service.js");
+const { OK, CREATED } = require("../core/response/success.response.js");
+const {
+  NotFoundError,
+  BadRequestError,
+} = require("../core/response/error.response.js");
+>>>>>>> f5c7c481934793760027da920902a3f951c9af59
 
-export const getAllRoutes = async (req, res) => {
+const getAllRoutes = async (req, res) => {
   const routes = await service.getAllRoutes();
   return new OK({
     message: "Routes retrieved successfully",
@@ -13,7 +22,7 @@ export const getAllRoutes = async (req, res) => {
   }).send(req, res);
 };
 
-export const getRouteById = async (req, res) => {
+const getRouteById = async (req, res) => {
   const route = await service.getRouteById(req.params.id);
   if (!route) {
     throw new NotFoundError("Route not found");
@@ -24,7 +33,7 @@ export const getRouteById = async (req, res) => {
   }).send(req, res);
 };
 
-export const createRoute = async (req, res) => {
+const createRoute = async (req, res) => {
   if (!req.body.startLocation || !req.body.endLocation) {
     throw new BadRequestError("Start and End locations are required");
   }
@@ -36,7 +45,7 @@ export const createRoute = async (req, res) => {
   }).send(req, res);
 };
 
-export const updateRoute = async (req, res) => {
+const updateRoute = async (req, res) => {
   const updatedRoute = await service.updateRoute(req.params.id, req.body);
   if (!updatedRoute) throw new NotFoundError("Route not found");
 
@@ -46,7 +55,7 @@ export const updateRoute = async (req, res) => {
   }).send(req, res);
 };
 
-export const deleteRoute = async (req, res) => {
+const deleteRoute = async (req, res) => {
   const deletedRoute = await service.deleteRoute(req.params.id);
   if (!deletedRoute) throw new NotFoundError("Route not found");
 
