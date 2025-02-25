@@ -12,9 +12,11 @@ const routeSchema = new Schema({
     routeEndTime: { type: Date, default: null },
     startLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
     endLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
+    stopMap: { type: Schema.Types.ObjectId, ref: 'StopMap', default: null },
     price: { type: Number, required: true },
     remainingSeat:  { type: Number, required: true, default: null },
 }, {
+    collection: "routes",
     timestamps: true
 });
 
