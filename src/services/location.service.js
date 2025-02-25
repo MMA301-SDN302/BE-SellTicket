@@ -1,11 +1,11 @@
-const locationRepository = require("../repository/location.repo.js");
+import * as locationRepository from "../repository/location.repo.js";
 
 const getAllLocations = async () => {
   return await locationRepository.getAllLocations();
 };
 
-const getLocationById = async (id) => {
-  return await locationRepository.getLocationById(id);
+const getLocationById = async (_id) => {  // Sử dụng _id thay vì location_id
+  return await locationRepository.getLocationById(_id);  // Dùng _id ở đây
 };
 
 const createLocation = async (data) => {
@@ -15,15 +15,15 @@ const createLocation = async (data) => {
   return await locationRepository.createLocation(data);
 };
 
-const updateLocation = async (id, data) => {
-  return await locationRepository.updateLocation(id, data);
+const updateLocation = async (_id, data) => {  // Sử dụng _id thay vì location_id
+  return await locationRepository.updateLocation(_id, data);  // Dùng _id ở đây
 };
 
-const deleteLocation = async (id) => {
-  return await locationRepository.deleteLocation(id);
+const deleteLocation = async (_id) => {  // Sử dụng _id thay vì location_id
+  return await locationRepository.deleteLocation(_id);  // Dùng _id ở đây
 };
 
-module.exports = {
+export {
   getAllLocations,
   getLocationById,
   createLocation,

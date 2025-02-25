@@ -9,7 +9,7 @@ const seatSchema = new Schema({
     isAvailable: { type: Boolean, default: true },
 },
     {
-        collection: "seat",
+        collection: "Seat",
         timestamps: true,
     });
 

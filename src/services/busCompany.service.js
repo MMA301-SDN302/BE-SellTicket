@@ -1,4 +1,4 @@
-const busCompanyRepository = require("../repository/busCompany.repo.js");
+const busCompanyRepository = require("../repository/buscompany.repo.js");
 
 const getAllBusCompanies = async () => {
   return await busCompanyRepository.getAllBusCompanies();

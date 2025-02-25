@@ -1,13 +1,16 @@
 import * as service from "../services/route.service.js";
 import { OK, CREATED } from "../core/response/success.response.js";
-import { NotFoundError, BadRequestError } from "../core/response/error.response.js";
+import {
+  NotFoundError,
+  BadRequestError,
+} from "../core/response/error.response.js";
 
 export const getAllRoutes = async (req, res) => {
   const routes = await service.getAllRoutes();
   return new OK({
     message: "Routes retrieved successfully",
     metadata: routes,
-  }).send(res);
+  }).send(req, res);
 };
 
 export const getRouteById = async (req, res) => {
@@ -18,7 +21,7 @@ export const getRouteById = async (req, res) => {
   return new OK({
     message: "Route retrieved successfully",
     metadata: route,
-  }).send(res);
+  }).send(req, res);
 };
 
 export const createRoute = async (req, res) => {
@@ -30,7 +33,7 @@ export const createRoute = async (req, res) => {
   return new CREATED({
     message: "Route created successfully",
     metadata: newRoute,
-  }).send(res);
+  }).send(req, res);
 };
 
 export const updateRoute = async (req, res) => {
@@ -40,16 +43,15 @@ export const updateRoute = async (req, res) => {
   return new OK({
     message: "Route updated successfully",
     metadata: updatedRoute,
-  }).send(res);
+  }).send(req, res);
 };
 
 export const deleteRoute = async (req, res) => {
   const deletedRoute = await service.deleteRoute(req.params.id);
   if (!deletedRoute) throw new NotFoundError("Route not found");
 
-  return new OK({ message: "Route deleted successfully" }).send(res);
+  return new OK({ message: "Route deleted successfully" }).send(req,res);
 };
-
 
 export const getSearchRoutes = async (req, res) => {
   try {
@@ -58,7 +60,10 @@ export const getSearchRoutes = async (req, res) => {
     const date = decodeURIComponent(req.query.date);
     const cars = await service.getCarByRoute(startLocation, endLocation, date);
     // return res.status(200).json({ status: "success", data: cars });
-    return new OK({ message: "Route search result OK", metadata: cars }).send(req, res);
+    return new OK({ message: "Route search result OK", metadata: cars }).send(
+      req,
+      res
+    );
   } catch (error) {
     return res.status(500).json({
       status: "error",

@@ -7,7 +7,7 @@ export const getAllBusCompanies = async (req, res) => {
   return new OK({
     message: "Bus companies retrieved successfully",
     metadata: busCompanies,
-  }).send(res);
+  }).send(req, res);
 };
 
 export const getBusCompanyById = async (req, res) => {
@@ -18,7 +18,7 @@ export const getBusCompanyById = async (req, res) => {
   return new OK({
     message: "Bus company retrieved successfully",
     metadata: busCompany,
-  }).send(res);
+  }).send(req, res);
 };
 
 export const createBusCompany = async (req, res) => {
@@ -28,7 +28,7 @@ export const createBusCompany = async (req, res) => {
   return new CREATED({
     message: "Bus company created successfully",
     metadata: newBusCompany,
-  }).send(res);
+  }).send(req, res);
 };
 
 export const updateBusCompany = async (req, res) => {
@@ -38,12 +38,12 @@ export const updateBusCompany = async (req, res) => {
   return new OK({
     message: "Bus company updated successfully",
     metadata: updatedBusCompany,
-  }).send(res);
+  }).send(req, res);
 };
 
 export const deleteBusCompany = async (req, res) => {
   const deletedBusCompany = await service.deleteBusCompany(req.params.id);
   if (!deletedBusCompany) throw new NotFoundError("Bus company not found");
 
-  return new OK({ message: "Bus company deleted successfully" }).send(res);
+  return new OK({ message: "Bus company deleted successfully" }).send(req, res);
 };

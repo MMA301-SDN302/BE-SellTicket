@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const routeSchema = new Schema({
-    isDaily: { type: Boolean, required: true },
     policy: { type: String, default: null },
     car: { type: Schema.Types.ObjectId, ref: 'Car', default: null },
     name: { type: String, required: true },
@@ -16,7 +15,7 @@ const routeSchema = new Schema({
     price: { type: Number, required: true },
     remainingSeat:  { type: Number, required: true, default: null },
 }, {
-    collection: "routes",
+    collection: "Routes",
     timestamps: true
 });
 
