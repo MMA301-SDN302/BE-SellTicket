@@ -14,13 +14,11 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      unique: true,
-      default: null,
     },
     sex: {
       type: String,
-      required: true,
-      enum: ["Male", "Female"],
+      enum: ["Male", "Female", "Other"],
+      default: null,
     },
     dateOfBirth: {
       type: Date,
@@ -33,6 +31,10 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    avatar: {
+      type: String,
+      default: null,
     },
     status: {
       type: String,

@@ -15,7 +15,6 @@ const otpSchema = new Schema(
     },
     otp_sign: {
       type: String,
-      required: true,
     },
   },
   {
@@ -23,5 +22,5 @@ const otpSchema = new Schema(
     timestamps: true,
   }
 );
-otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
+otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 });
 module.exports = model(DOCUMENT_NAME, otpSchema);

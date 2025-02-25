@@ -52,7 +52,7 @@ class App {
       error.error_code = "NOT_FOUND";
       next(error);
     });
-  
+
     // hàm quản lí lỗi
     app.use((error, req, res, next) => {
       const resMessage = `${error.status} - ${Date.now() - req.now}ms - ${

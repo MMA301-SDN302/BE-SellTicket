@@ -1,3 +1,5 @@
+const { NOT_FOUND } = require("./statusCodes");
+
 const ERROR_CODES = {
   // Lỗi liên quan đến dữ liệu đầu vào
   MISSING_FIELD: "MISSING_FIELD", // Thiếu trường bắt buộc
@@ -5,10 +7,13 @@ const ERROR_CODES = {
   INVALID_LENGTH: "INVALID_LENGTH", // Dữ liệu không đúng độ dài
   INVALID_TYPE: "INVALID_TYPE", // Kiểu dữ liệu không hợp lệ
   INVALID_PHONE_NUMBER: "INVALID_PHONE_NUMBER", // Số điện thoại không hợp lệ
+  NOT_FOUND: "NOT_FOUND", // Không tìm thấy dữ liệu
   // Lỗi liên quan đến xác thực
   INVALID_OTP: "INVALID_OTP", // OTP không đúng
   INVALID_CREDENTIALS: "INVALID_CREDENTIALS", // Thông tin đăng nhập không hợp lệ
   UNAUTHORIZED: "UNAUTHORIZED", // Không có quyền truy cập
+  FORBIDDEN: "FORBIDDEN", // Bị cấm truy cập
+  JWT_EXPIRED: "JWT_EXPIRED", // JWT hết hạn
 
   // Lỗi liên quan đến dữ liệu trùng lặp
   DUPLICATE_ENTRY: "DUPLICATE_ENTRY", // Dữ liệu đã tồn tại

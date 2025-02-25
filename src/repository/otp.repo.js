@@ -11,9 +11,8 @@ const getOtp = async (otpNumber, phoneNumber) => {
   });
 };
 
-const deleteOtp = async (otpNumber, phoneNumber) => {
+const deleteOtp = async (phoneNumber) => {
   return await otp.findOneAndDelete({
-    otp_number: otpNumber,
     mobile_phone: phoneNumber,
   });
 };
