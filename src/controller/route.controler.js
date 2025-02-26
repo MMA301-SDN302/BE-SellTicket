@@ -14,7 +14,7 @@ const getAllRoutes = async (req, res) => {
 };
 
 const getRouteById = async (req, res) => {
-  const route = await service.getRouteById(req.params.id);
+  const route = await service.getRouteById(req.params._id);
   if (!route) {
     throw new NotFoundError("Route not found");
   }
@@ -37,7 +37,7 @@ const createRoute = async (req, res) => {
 };
 
 const updateRoute = async (req, res) => {
-  const updatedRoute = await service.updateRoute(req.params.id, req.body);
+  const updatedRoute = await service.updateRoute(req.params._id, req.body);
   if (!updatedRoute) throw new NotFoundError("Route not found");
 
   return new OK({
@@ -47,7 +47,7 @@ const updateRoute = async (req, res) => {
 };
 
 const deleteRoute = async (req, res) => {
-  const deletedRoute = await service.deleteRoute(req.params.id);
+  const deletedRoute = await service.deleteRoute(req.params._id);
   if (!deletedRoute) throw new NotFoundError("Route not found");
 
   return new OK({ message: "Route deleted successfully" }).send(req, res);

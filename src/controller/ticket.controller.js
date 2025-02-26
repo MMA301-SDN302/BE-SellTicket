@@ -14,7 +14,7 @@ const getAllTickets = async (req, res) => {
 };
 
 const getTicketById = async (req, res) => {
-  const ticket = await service.getTicketById(req.params.id);
+  const ticket = await service.getTicketById(req.params._id);
   if (!ticket) {
     throw new NotFoundError("Ticket not found");
   }
@@ -35,7 +35,7 @@ const createTicket = async (req, res) => {
 };
 
 const cancelTicket = async (req, res) => {
-  const cancelled = await service.cancelTicket(req.params.id);
+  const cancelled = await service.cancelTicket(req.params._id);
   return new OK({
     message: "Ticket cancelled successfully",
     metadata: cancelled,

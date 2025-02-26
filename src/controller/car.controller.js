@@ -14,7 +14,7 @@ const getAllCars = async (req, res) => {
 };
 
 const getCarById = async (req, res) => {
-  const car = await service.getCarById(req.params.id);
+  const car = await service.getCarById(req.params._id);
   if (!car) throw new NotFoundError();
   return new OK({
     message: "Car retrieved successfully",
@@ -32,7 +32,7 @@ const createCar = async (req, res) => {
 };
 
 const updateCar = async (req, res) => {
-  const updatedCar = await service.updateCar(req.params.id, req.body);
+  const updatedCar = await service.updateCar(req.params._id, req.body);
   if (!updatedCar) throw new NotFoundError("Car not found");
   return new OK({
     message: "Car updated successfully",
@@ -41,7 +41,7 @@ const updateCar = async (req, res) => {
 };
 
 const deleteCar = async (req, res) => {
-  const deletedCar = await service.deleteCar(req.params.id);
+  const deletedCar = await service.deleteCar(req.params._id);
   if (!deletedCar) throw new NotFoundError("Car not found");
   return new OK({ message: "Car deleted successfully" }).send(req, res);
 };

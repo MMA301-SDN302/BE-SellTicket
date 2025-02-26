@@ -14,7 +14,7 @@ const {
 };
 
  const getLocationById = async (req, res) => {
-    const location = await service.getLocationById(req.params.id);
+    const location = await service.getLocationById(req.params._id);
     if (!location) {
       throw new NotFoundError();
     }
@@ -38,7 +38,7 @@ const {
 
  const updateLocation = async (req, res) => {
     const updatedLocation = await service.updateLocation(
-      req.params.id,
+      req.params_id,
       req.body
     );
     if (!updatedLocation) throw new NotFoundError("Location not found");
@@ -51,7 +51,7 @@ const {
 
  const deleteLocation = async (req, res) => {
 
-    const deletedLocation = await service.deleteLocation(req.params.id);
+    const deletedLocation = await service.deleteLocation(req.params._id);
     if (!deletedLocation) throw new NotFoundError("Location not found");
     return new OK({ message: "Location deleted successfully" }).send(req,res);
 };
