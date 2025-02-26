@@ -13,8 +13,9 @@ const getAllCars = async (req, res) => {
   }).send(req, res);
 };
 
+
 const getCarById = async (req, res) => {
-  const car = await service.getCarById(req.params.id);
+  const car = await service.getCarById(req.params._id);
   if (!car) throw new NotFoundError();
   return new OK({
     message: "Car retrieved successfully",
@@ -32,7 +33,7 @@ const createCar = async (req, res) => {
 };
 
 const updateCar = async (req, res) => {
-  const updatedCar = await service.updateCar(req.params.id, req.body);
+  const updatedCar = await service.updateCar(req.params._id, req.body);
   if (!updatedCar) throw new NotFoundError("Car not found");
   return new OK({
     message: "Car updated successfully",
@@ -41,35 +42,15 @@ const updateCar = async (req, res) => {
 };
 
 const deleteCar = async (req, res) => {
-  const deletedCar = await service.deleteCar(req.params.id);
+  const deletedCar = await service.deleteCar(req.params._id);
   if (!deletedCar) throw new NotFoundError("Car not found");
   return new OK({ message: "Car deleted successfully" }).send(req, res);
 };
-const getCarStatistics = async (req, res) => {
-  const busCompanyId = req.params._id; // Get the bus company ID from the request params
 
-  // Validate if the busCompanyId exists
-  if (!busCompanyId) {
-    throw new BadRequestError("Bus Company ID is required");
-  }
-
-  const carCount = await carService.getCarStatisticsByBusCompany(busCompanyId);
-
-  // If no cars are found, we return a NotFoundError
-  if (carCount === 0) {
-    throw new NotFoundError(`No cars found for Bus Company ID ${busCompanyId}`);
-  }
-
-  return new OK({
-    message: `Car count for BusCompany ${busCompanyId}`,
-    metadata: { totalCars: carCount },
-  }).send(req, res);
-};
 module.exports = {
-  getAllCars,
-  getCarById,
-  createCar,
-  updateCar,
   deleteCar,
-  getCarStatistics,
-};
+  updateCar,
+  createCar,
+  getCarById,
+  getAllCars,
+}

@@ -1,4 +1,4 @@
-locationRepository = require("../repository/location.repo.js");
+const locationRepository = require("../repository/location.repo.js")
 
 const getAllLocations = async () => {
   return await locationRepository.getAllLocations();
@@ -26,7 +26,7 @@ const deleteLocation = async (_id) => {
   return await locationRepository.deleteLocation(_id); // Dùng _id ở đây
 };
 
-module.exports =  {
+module.exports = {
   getAllLocations,
   getLocationById,
   createLocation,

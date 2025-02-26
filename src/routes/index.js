@@ -7,5 +7,6 @@ router.use("/cars", require("./car.router"))
 router.use("/busCompany", require("./busCompany.router"))
 router.use("/routes", require("./route.router"))
 router.use("/tickets", require("./ticket.router"))
+router.use("/trips", require("./trip.router"))
 
 module.exports = router;

@@ -2,7 +2,19 @@ const mongoose = require("mongoose");
 
 const ticketSchema = new mongoose.Schema(
   {
-    
+    ticket_id: {
+      type: String,
+      required: true,
+      unique: true,
+      default: () => new mongoose.Types.ObjectId().toString(),
+    },
+    ticket_No: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    passenger: { type: String, required: true },
+
     ticket_price: {
       type: Number,
       required: true,
@@ -13,18 +25,23 @@ const ticketSchema = new mongoose.Schema(
     },
     ticket_status: {
       type: String,
-      enum: ["pending", "confirmed", "cancelled"],
+      enum: ["pending", "confirmed", "canceled", "completed"],
       default: "pending",
     },
-    route_id: {
+    trip_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Route",
-      required: true, 
+      ref: "Trip",
+      required: true,
     },
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+      required: true,
+    }
   },
   {
     collection: "Ticket",
-    timestamps: true, 
+    timestamps: true,
   }
 );
 

@@ -5,7 +5,7 @@ const {
 const { server } = require("./src/config/socket.config");
 require("./src/server.js");
 server.listen(port, () => {
-  console.log("start");
+  console.log("start ", port);
 });
 
 process.on("SIGINT", () => {

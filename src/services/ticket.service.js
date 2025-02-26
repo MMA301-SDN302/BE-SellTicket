@@ -5,8 +5,8 @@ const getAllTickets = async () => {
   return await ticketRepository.getAllTickets();
 };
 
-const getTicketById = async (id) => {
-  return await ticketRepository.getTicketById(id);
+const getTicketById = async (_id) => {
+  return await ticketRepository.getTicketById(_id);
 };
 
 const createTicket = async (data) => {
@@ -16,8 +16,8 @@ const createTicket = async (data) => {
   return await ticketRepository.createTicket(data);
 };
 
-const cancelTicket = async (id) => {
-  return await ticketRepository.cancelTicket(id);
+const cancelTicket = async (_id) => {
+  return await ticketRepository.cancelTicket(_id);
 };
 
 const autoCancelUnpaidTickets = async () => {

@@ -3,7 +3,7 @@ const { OK, CREATED } = require("../core/response/success.response.js");
 const {
   NotFoundError,
   BadRequestError,
-} = require("../core/response/error.response.js");
+} = require("../core/response/error.response.js")
 
 const getAllRoutes = async (req, res) => {
   const routes = await service.getAllRoutes();
@@ -52,6 +52,7 @@ const deleteRoute = async (req, res) => {
 
   return new OK({ message: "Route deleted successfully" }).send(req, res);
 };
+
 const getSearchRoutes = async (req, res) => {
   try {
     const startLocation = decodeURIComponent(req.query.startLocation);

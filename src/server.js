@@ -54,9 +54,8 @@ class App {
 
     // hàm quản lí lỗi
     app.use((error, req, res, next) => {
-      const resMessage = `${error.status} - ${Date.now() - req.now}ms - ${
-        error.message
-      }`;
+      const resMessage = `${error.status} - ${Date.now() - req.now}ms - ${error.message
+        }`;
       const options = [
         req.path,
         { requestId: req.traceId },
