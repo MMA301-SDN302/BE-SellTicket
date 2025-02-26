@@ -14,7 +14,7 @@ const getAllBusCompanies = async (req, res) => {
 };
 
 const getBusCompanyById = async (req, res) => {
-  const busCompany = await service.getBusCompanyById(req.params.id);
+  const busCompany = await service.getBusCompanyById(req.params._id);
   if (!busCompany) {
     throw new NotFoundError("Bus company not found");
   }
@@ -37,7 +37,7 @@ const createBusCompany = async (req, res) => {
 
 const updateBusCompany = async (req, res) => {
   const updatedBusCompany = await service.updateBusCompany(
-    req.params.id,
+    req.params._id,
     req.body
   );
   if (!updatedBusCompany) throw new NotFoundError("Bus company not found");
@@ -49,7 +49,7 @@ const updateBusCompany = async (req, res) => {
 };
 
 const deleteBusCompany = async (req, res) => {
-  const deletedBusCompany = await service.deleteBusCompany(req.params.id);
+  const deletedBusCompany = await service.deleteBusCompany(req.params._id);
   if (!deletedBusCompany) throw new NotFoundError("Bus company not found");
 
   return new OK({ message: "Bus company deleted successfully" }).send(req, res);

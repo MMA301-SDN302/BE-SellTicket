@@ -20,7 +20,6 @@ const getAllTickets = async (req, res, next) => {
 
 
 const getTicketById = async (req, res) => {
-
   const ticket = await service.getTicketById(req.params._id);
   if (!ticket) {
     throw new NotFoundError("Ticket not found");
