@@ -1,5 +1,6 @@
 const routeRepository = require("../repository/route.repo");
 const carRepository = require("../repository/car.repo");
+const BusCompany = require("../models/BusCompany/BusCompany");
 
 const getAllRoutes = async () => {
   return await routeRepository.getAllRoutes();
@@ -47,6 +48,22 @@ const updateCar = async (_id, data) => {
 const deleteCar = async (_id) => {
   return await carRepository.deleteCar(_id);
 };
+
+const getCarStatisticsByBusCompany = async (_id) => {
+  try {
+    const objectId = mongoose.Types.ObjectId(_id);
+
+    const carCount = await Car.aggregate([
+      { $match: { buscompany_id: objectId } },
+      { $count: "totalCars" },
+    ]);
+
+    return carCount[0] ? carCount[0].totalCars : 0;
+  } catch (error) {
+    console.error("Error fetching car statistics:", error);
+    throw error;
+  }
+};
 module.exports = {
   getAllRoutes,
   getAllCars,
@@ -59,4 +76,5 @@ module.exports = {
   createCar,
   updateCar,
   deleteCar,
+  getCarStatisticsByBusCompany,
 };

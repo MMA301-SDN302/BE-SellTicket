@@ -10,5 +10,6 @@ router.get("/:_id", asyncHandler(controller.getCarById));
 router.post("/", asyncHandler(controller.createCar));
 router.put("/:_id", asyncHandler(controller.updateCar));
 router.delete("/:_id", asyncHandler(controller.deleteCar));
+router.get("/stats/:_id", asyncHandler(controller.getCarStatistics));
 
 module.exports = router;

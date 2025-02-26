@@ -21,7 +21,7 @@ const {
     return new OK({
       message: "Location retrieved successfully",
       metadata: location,
-    }).send(res);
+    }).send(req,res);
 };
 
  const createLocation = async (req, res) => {
@@ -32,7 +32,7 @@ const {
     return new CREATED({
       message: "Location created successfully",
       metadata: newLocation,
-    }).send(res);
+    }).send(req,res);
 
 };
 
@@ -45,7 +45,7 @@ const {
     return new OK({
       message: "Location updated successfully",
       metadata: updatedLocation,
-    }).send(res);
+    }).send(req,res);
  
 };
 
@@ -53,7 +53,7 @@ const {
 
     const deletedLocation = await service.deleteLocation(req.params.id);
     if (!deletedLocation) throw new NotFoundError("Location not found");
-    return new OK({ message: "Location deleted successfully" }).send(res);
+    return new OK({ message: "Location deleted successfully" }).send(req,res);
 };
 
 module.exports = {
