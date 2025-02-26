@@ -36,7 +36,7 @@ const createLocation = async (req, res) => {
 
 const updateLocation = async (req, res) => {
   const updatedLocation = await service.updateLocation(
-    req.params_id,
+    req.params._id,
     req.body
   );
   if (!updatedLocation) throw new NotFoundError("Location not found");

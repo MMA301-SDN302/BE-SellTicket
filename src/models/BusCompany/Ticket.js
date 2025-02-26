@@ -25,7 +25,7 @@ const ticketSchema = new mongoose.Schema(
     },
     ticket_status: {
       type: String,
-      enum: ["pending", "confirmed", "canceled", "completed"],
+      enum: ["pending", "confirmed", "cancelled", "completed"],
       default: "pending",
     },
     trip_id: {

@@ -6,9 +6,9 @@ const asyncHandler = require("express-async-handler");
 
 // Define ticket routes
 // router.get("/", asyncHandler(controller.));
-router.get("/:id", asyncHandler(controller.getTripByIdController));
+router.get("/:_id", asyncHandler(controller.getTripByIdController));
 router.post("/", asyncHandler(controller.createTripController));
-router.delete("/:id", asyncHandler(controller.deleteTripController));
+router.delete("/:_id", asyncHandler(controller.deleteTripController));
 // router.get("/sold-this-month", asyncHandler(controller.getSoldTicketsThisMonth));
 
 module.exports = router;

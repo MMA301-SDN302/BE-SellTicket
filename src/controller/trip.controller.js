@@ -15,7 +15,7 @@ const createTripController = async (req, res, next) => {
 const deleteTripController = async (req, res, next) => {
     try {
         console.log("req.params", req.params);
-        const cancelled = await deleteTripsByRoute(req.params.id);
+        const cancelled = await deleteTripsByRoute(req.params._id);
 
         res.status(200).json({
             message: "Ticket cancelled successfully",
@@ -27,7 +27,7 @@ const deleteTripController = async (req, res, next) => {
     }
 };
 const getTripByIdController = async (req, res) => {
-    const ticket = await getTripById(req.params.id);
+    const ticket = await getTripById(req.params._id);
     if (!ticket) {
         throw new NotFoundError("Ticket not found");
     }
