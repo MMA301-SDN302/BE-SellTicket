@@ -9,7 +9,7 @@ const stopMapSchema = new Schema({
         stop_time: { type: Date, default: null } 
     }]
 }, {
-    collection: "stopmaps",
+    collection: "Stopmaps",
     timestamps: true
 });
 

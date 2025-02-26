@@ -2,11 +2,7 @@ const mongoose = require("mongoose");
 
 const ticketSchema = new mongoose.Schema(
   {
-    ticket_id: {
-      type: Number,
-      required: true,
-      unique: true,
-    },
+    
     ticket_price: {
       type: Number,
       required: true,
@@ -27,7 +23,7 @@ const ticketSchema = new mongoose.Schema(
     },
   },
   {
-    collection: "ticket",
+    collection: "Ticket",
     timestamps: true, 
   }
 );

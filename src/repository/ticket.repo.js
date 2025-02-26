@@ -2,15 +2,15 @@ const Ticket = require("../models/BusCompany/Ticket");
 const Trip = require("../models/BusCompany/Trip");
 
 const getAllTickets = async () => {
-  return await Ticket.find().populate("trip_id");
+  return await Ticket.find().populate("_id");
 };
 
-const getTicketById = async (id) => {
-  return await Ticket.findOne({ _id: id }).populate("trip_id");
+const getTicketById = async (_id) => {
+  return await Ticket.findOne({ _id }).populate("_id");
 };
 
 const createTicket = async (data) => {
-  const trip = await Trip.findById(data.trip_id);
+  const trip = await Trip.findById(data._id);
   if (!trip) throw new Error("Trip not found");
 
   if (trip.availableSeats <= 0) throw new Error("No available seats");
@@ -21,21 +21,24 @@ const createTicket = async (data) => {
   const ticket = await Ticket.create(data);
   return ticket;
 };
+const createManyTickets = async (ticketsData) => {
+  return await Ticket.insertMany(ticketsData); // Chèn nhiều vé một lần
+};
 
-const cancelTicket = async (id) => {
+const cancelTicket = async (_id) => {
     // Lấy thông tin vé
-    const ticket = await Ticket.findById(id);
+    const ticket = await Ticket.findById(_id);
     if (!ticket) throw new Error("Ticket not found");
 
     // Tăng lại số ghế trống cho chuyến đi
-    const trip = await Trip.findById(ticket.trip_id);
+    const trip = await Trip.findById(ticket._id);
     if (trip) {
         trip.availableSeats += 1;
         await trip.save();
     }
 
     // Xóa vé
-    await Ticket.findByIdAndDelete(id);
+    await Ticket.findByIdAndDelete(_id);
     return { message: "Ticket cancelled successfully" };
 };
 
@@ -59,5 +62,6 @@ module.exports = {
     getTicketById,
     createTicket,
     cancelTicket,
-    autoCancelUnpaidTickets
+    autoCancelUnpaidTickets,
+    createManyTickets
 };

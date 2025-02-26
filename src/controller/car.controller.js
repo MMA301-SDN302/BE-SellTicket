@@ -28,22 +28,22 @@ const createCar = async (req, res) => {
   return new CREATED({
     message: "Car created successfully",
     metadata: newCar,
-  }).send(req, res);
+  }).send(res);
 };
 
-const updateCar = async (req, res) => {
+ const updateCar = async (req, res) => {
   const updatedCar = await service.updateCar(req.params.id, req.body);
   if (!updatedCar) throw new NotFoundError("Car not found");
   return new OK({
     message: "Car updated successfully",
     metadata: updatedCar,
-  }).send(req, res);
+  }).send(res);
 };
 
-const deleteCar = async (req, res) => {
+ const deleteCar = async (req, res) => {
   const deletedCar = await service.deleteCar(req.params.id);
   if (!deletedCar) throw new NotFoundError("Car not found");
-  return new OK({ message: "Car deleted successfully" }).send(req, res);
+  return new OK({ message: "Car deleted successfully" }).send(res);
 };
 
 module.exports = {

@@ -52,24 +52,17 @@ const deleteRoute = async (req, res) => {
 
   return new OK({ message: "Route deleted successfully" }).send(req, res);
 };
-
-module.exports = {
-  getAllRoutes,
-  getRouteById,
-  createRoute,
-  updateRoute,
-  deleteRoute,
-};
-
-
-export const getSearchRoutes = async (req, res) => {
+const getSearchRoutes = async (req, res) => {
   try {
     const startLocation = decodeURIComponent(req.query.startLocation);
     const endLocation = decodeURIComponent(req.query.endLocation);
     const date = decodeURIComponent(req.query.date);
     const cars = await service.getCarByRoute(startLocation, endLocation, date);
     // return res.status(200).json({ status: "success", data: cars });
-    return new OK({ message: "Route search result OK", metadata: cars }).send(req, res);
+    return new OK({ message: "Route search result OK", metadata: cars }).send(
+      req,
+      res
+    );
   } catch (error) {
     return res.status(500).json({
       status: "error",
@@ -77,4 +70,12 @@ export const getSearchRoutes = async (req, res) => {
       message: error.message,
     });
   }
+};
+module.exports = {
+  getAllRoutes,
+  getRouteById,
+  createRoute,
+  updateRoute,
+  deleteRoute,
+  getSearchRoutes,
 };

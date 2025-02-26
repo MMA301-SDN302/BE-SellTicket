@@ -6,7 +6,7 @@ const { app } = require("./config/socket.config.js");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 const logger = require("./logger");
-const locationRoutes = require("./routes/location.router.js"); // Import route location
+
 class App {
   setup = async () => {
     //config cors
@@ -44,7 +44,6 @@ class App {
 
     // init routes
     app.use("/v1/api", require("./routes"));
-
     //handle Error
     app.use((req, res, next) => {
       const error = new Error("Not Found");

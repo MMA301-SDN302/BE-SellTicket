@@ -12,4 +12,6 @@ router.post("/", asyncHandler(controller.createRoute));
 router.put("/:id", asyncHandler(controller.updateRoute));
 router.delete("/:id", asyncHandler(controller.deleteRoute));
 
+router.get("/statistics", asyncHandler(controller.getTripStatistics));
+
 module.exports = router;

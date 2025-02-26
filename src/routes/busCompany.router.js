@@ -6,9 +6,9 @@ const asyncHandler = require("express-async-handler");
 
 // Define bus company routes
 router.get("/", asyncHandler(controller.getAllBusCompanies));
-router.get("/:id", asyncHandler(controller.getBusCompanyById));
+router.get("/:_id", asyncHandler(controller.getBusCompanyById));
 router.post("/", asyncHandler(controller.createBusCompany));
-router.put("/:id", asyncHandler(controller.updateBusCompany));
-router.delete("/:id", asyncHandler(controller.deleteBusCompany));
+router.put("/:_id", asyncHandler(controller.updateBusCompany));
+router.delete("/:_id", asyncHandler(controller.deleteBusCompany));
 
 module.exports = router;
