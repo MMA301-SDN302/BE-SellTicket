@@ -126,6 +126,11 @@ const getCarByRoute = async (startLocationName, endLocationName, timeStart) => {
   }
 };
 
+
+const getLocationSearch = async (startLocationName, endLocationName) => {
+  return await routeRepository.deleteRoute(id);
+};
+
 module.exports = {
   getAllRoutes,
   getRouteById,
