@@ -52,14 +52,7 @@ const getCarByRoute = async (startLocationName, endLocationName, timeStart) => {
     const startDate = new Date(year, month - 1, day, 0, 0, 0);
     const endDate = new Date(year, month - 1, day + 4, 23, 59, 59);
 
-    const routes = await Route.find({
-      routeStartTime: { $gte: startDate, $lte: endDate },
-    })
-      .populate({
-        path: "car",
-        populate: { path: "bus_company_id", model: "BusCompany" },
-      })
-      .populate("startLocation endLocation");
+    const routes = await routeRepository.getRouteBySearch(startDate, endDate);
 
     if (!routes || routes.length === 0) {
       throw new Error(
@@ -115,7 +108,6 @@ const getCarByRoute = async (startLocationName, endLocationName, timeStart) => {
         }
       }
 
-      // 🚀 Tính giá vé theo chặng người dùng đi
       let pricePart = route.price;
       if (routeStartStop && routeEndStop) {
         const priceRatio =
@@ -124,7 +116,6 @@ const getCarByRoute = async (startLocationName, endLocationName, timeStart) => {
         pricePart = Math.round(route.price * priceRatio);
       }
 
-      // ⏳ Tính thời gian dự kiến đến điểm đi & điểm đến của người dùng
       const totalDuration = route.routeEndTime - route.routeStartTime;
       const timeStartLocationPart = new Date(
         route.routeStartTime.getTime() +
