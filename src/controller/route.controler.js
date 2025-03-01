@@ -72,6 +72,7 @@ const getSearchRoutes = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   getAllRoutes,
   getRouteById,
