@@ -9,8 +9,8 @@ const getAllRoutes = async () => {
   return await routeRepository.getAllRoutes();
 };
 
-const getRouteById = async (id) => {
-  return await routeRepository.getRouteById(id);
+const getRouteById = async (_id) => {
+  return await routeRepository.getRouteById(_id);
 };
 
 const createRoute = async (data) => {
@@ -20,12 +20,12 @@ const createRoute = async (data) => {
   return await routeRepository.createRoute(data);
 };
 
-const updateRoute = async (id, data) => {
-  return await routeRepository.updateRoute(id, data);
+const updateRoute = async (_id, data) => {
+  return await routeRepository.updateRoute(_id, data);
 };
 
-const deleteRoute = async (id) => {
-  return await routeRepository.deleteRoute(id);
+const deleteRoute = async (_id) => {
+  return await routeRepository.deleteRoute(_id);
 };
 
 const getCarByRoute = async (startLocationName, endLocationName, timeStart) => {

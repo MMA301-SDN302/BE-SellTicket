@@ -1,7 +1,8 @@
 const routeRepository = require("../repository/route.repo");
 const carRepository = require("../repository/car.repo");
 const BusCompany = require("../models/BusCompany/BusCompany");
-
+const Car = require("../models/BusCompany/Car");
+const mongoose = require('mongoose');
 const getAllRoutes = async () => {
   return await routeRepository.getAllRoutes();
 };
@@ -51,8 +52,8 @@ const deleteCar = async (_id) => {
 
 const getCarStatisticsByBusCompany = async (_id) => {
   try {
-    const objectId = mongoose.Types.ObjectId(_id);
-
+    const objectId = new mongoose.Types.ObjectId(_id);  // Use new mongoose.Types.ObjectId to create a valid ObjectId
+    
     const carCount = await Car.aggregate([
       { $match: { buscompany_id: objectId } },
       { $count: "totalCars" },
@@ -64,6 +65,7 @@ const getCarStatisticsByBusCompany = async (_id) => {
     throw error;
   }
 };
+
 module.exports = {
   getAllRoutes,
   getAllCars,

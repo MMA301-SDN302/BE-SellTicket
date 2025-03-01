@@ -1,11 +1,11 @@
-const busCompanyRepository = require("../repository/buscompany.repo.js");
+const busCompanyRepository = require("../repository/busCompany.repo.js");
 
 const getAllBusCompanies = async () => {
   return await busCompanyRepository.getAllBusCompanies();
 };
 
-const getBusCompanyById = async (id) => {
-  return await busCompanyRepository.getBusCompanyById(id);
+const getBusCompanyById = async (_id) => {
+  return await busCompanyRepository.getBusCompanyById(_id);
 };
 
 const createBusCompany = async (data) => {
@@ -15,12 +15,12 @@ const createBusCompany = async (data) => {
   return await busCompanyRepository.createBusCompany(data);
 };
 
-const updateBusCompany = async (id, data) => {
-  return await busCompanyRepository.updateBusCompany(id, data);
+const updateBusCompany = async (_id, data) => {
+  return await busCompanyRepository.updateBusCompany(_id, data);
 };
 
-const deleteBusCompany = async (id) => {
-  return await busCompanyRepository.deleteBusCompany(id);
+const deleteBusCompany = async (_id) => {
+  return await busCompanyRepository.deleteBusCompany(_id);
 };
 
 module.exports = {

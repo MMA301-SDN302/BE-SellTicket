@@ -12,7 +12,8 @@ const routeSchema = new Schema({
     startLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
     endLocation: { type: Schema.Types.ObjectId, ref: 'Location', default: null },
     stopMap: { type: Schema.Types.ObjectId, ref: 'StopMap', default: null },
-    price: { type: Number, required: true },
+    trip: { type: Schema.Types.ObjectId, ref: 'Trip', default: null},
+    
     remainingSeat:  { type: Number, required: true, default: null },
 }, {
     collection: "Routes",

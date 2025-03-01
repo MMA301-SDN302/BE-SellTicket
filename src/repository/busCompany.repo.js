@@ -4,20 +4,20 @@ const getAllBusCompanies = async () => {
   return await BusCompany.find().populate("location_id");
 };
 
-const getBusCompanyById = async (id) => {
-  return await BusCompany.findOne({ bus_company_id: id }).populate("location_id");
+const getBusCompanyById = async (_id) => {
+  return await BusCompany.findOne({ _id }).populate("location_id");
 };
 
 const createBusCompany = async (data) => {
   return await BusCompany.create(data);
 };
 
-const updateBusCompany = async (id, data) => {
-  return await BusCompany.findOneAndUpdate({ bus_company_id: id }, data, { new: true });
+const updateBusCompany = async (_id, data) => {
+  return await BusCompany.findOneAndUpdate({ _id }, data, { new: true });
 };
 
-const deleteBusCompany = async (id) => {
-  return await BusCompany.findOneAndDelete({ bus_company_id: id });
+const deleteBusCompany = async (_id) => {
+  return await BusCompany.findOneAndDelete({ _id });
 };
 
 module.exports = {

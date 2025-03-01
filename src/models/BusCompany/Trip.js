@@ -1,18 +1,28 @@
 const mongoose = require("mongoose");
 
-const tripSchema = new mongoose.Schema({
-    route: { type: mongoose.Schema.Types.ObjectId, ref: 'Route', required: true },
-    car: { type: mongoose.Schema.Types.ObjectId, ref: 'Car', required: true },
-    busCompany: { type: mongoose.Schema.Types.ObjectId, ref: 'BusCompany', required: true },
-    depature: { type: String, required: true },
-    arrive: { type: String, required: true },
-    tripStartTime: { type: Date, required: true },
-    tripEndTime: { type: Date, required: true },
-    availableSeats: { type: Number, required: true }, // Số ghế trống
-}, {
+const tripSchema = new mongoose.Schema(
+  {
+    car: { type: mongoose.Schema.Types.ObjectId, ref: "Car", required: true },
+    depature: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "StopMap",
+      default: null,
+      required: true,
+    },
+    arrive: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "StopMap",
+      default: null,
+      required: true,
+    },
+    price: { type: Number, required: true },
+    isDaily: { type: Number, required: true }, // xét lịch trình tự động
+  },
+  {
     collection: "Trips",
-    timestamps: true
-});
+    timestamps: true,
+  }
+);
 
 const Trip = mongoose.model("Trip", tripSchema);
 module.exports = Trip;
