@@ -10,5 +10,6 @@ router.get("/:_id", asyncHandler(controller.getTripByIdController));
 router.post("/", asyncHandler(controller.createTripController));
 router.delete("/:_id", asyncHandler(controller.deleteTripController));
 // router.get("/sold-this-month", asyncHandler(controller.getSoldTicketsThisMonth));
+router.post("/create",asyncHandler(controller.createAutoTrip));
 
 module.exports = router;
