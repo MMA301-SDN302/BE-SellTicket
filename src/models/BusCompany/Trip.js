@@ -18,6 +18,8 @@ const tripSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     isDaily: { type: Number, required: true }, // xét lịch trình tự động
     tripDate: { type: Date, required: true },
+    estimatedArrivalDate: { type: Date, default: null },
+
   },
   {
     collection: "Trips",
