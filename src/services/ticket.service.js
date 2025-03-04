@@ -1,3 +1,4 @@
+const { BadRequestError } = require("../core/response/error.response.js");
 const Ticket = require("../models/BusCompany/Ticket.js");
 const ticketRepository = require("../repository/ticket.repo.js");
 
@@ -11,7 +12,7 @@ const getTicketById = async (_id) => {
 
 const createTicket = async (data) => {
   if (!data.trip_id) {
-    throw new Error("Trip ID is required");
+    throw new BadRequestError("Trip ID is required");
   }
   return await ticketRepository.createTicket(data);
 };

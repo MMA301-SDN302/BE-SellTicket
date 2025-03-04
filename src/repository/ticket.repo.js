@@ -1,3 +1,4 @@
+const { NotFoundError } = require("../core/response/error.response");
 const Ticket = require("../models/BusCompany/Ticket");
 const Trip = require("../models/BusCompany/Trip");
 
@@ -11,9 +12,9 @@ const getTicketById = async (_id) => {
 
 const createTicket = async (data) => {
   const trip = await Trip.findById(data.trip_id);
-  if (!trip) throw new Error("Trip not found");
-
-  if (trip.availableSeats <= 0) throw new Error("No available seats");
+  if (!trip)
+    throw new NotFoundError("Không tìm thấy tuyến");
+  if (trip.availableSeats <= 0) throw new NotFoundError("No available seats");
 
   trip.availableSeats -= 1;
   await trip.save();
@@ -29,7 +30,7 @@ const cancelTicket = async (id) => {
   console.log("Hủy vé với TicketId:", id);
 
   const ticket = await Ticket.findById(id);
-  if (!ticket) throw new Error("Ticket not found");
+  if (!ticket) throw new NotFoundError("Ticket not found");
 
   const trip = await Trip.findById(ticket.trip_id);
   if (trip) {
