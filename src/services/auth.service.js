@@ -55,11 +55,16 @@ const login = async ({ phoneNumber, password, traceId }) => {
   if (!isMatch) {
     throw new BadRequestError("Invalid User", ErrorCodes.INVALID_CREDENTIALS);
   }
-  await deleteTokenByUserId(user._id);
   const { accessToken, refreshToken } = await createTokenService(
     user._id,
     user.mobilePhone
   );
+  await createToken({
+    userId: user._id,
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+  });
+
   return {
     user: {
       userId: user._id,

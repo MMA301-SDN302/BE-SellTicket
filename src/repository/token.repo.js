@@ -4,14 +4,19 @@ const createToken = async ({
   userId,
   accessToken,
   refreshToken,
-  refreshTokenUsed,
+  refreshTokenUsed = [],
 }) => {
-  return await Token.create({
-    user: userId,
-    accessToken,
-    refreshToken,
-    refreshTokenUsed,
-  });
+  // update if token is already exist or create new token
+  return await Token.findOneAndUpdate(
+    { user: userId },
+    {
+      user: userId,
+      accessToken,
+      refreshToken,
+      refreshTokenUsed,
+    },
+    { upsert: true, new: true }
+  );
 };
 
 const findTokenByUserId = async (userId) => {
