@@ -25,8 +25,7 @@ const getLocationById = async (req, res) => {
 };
 
 const createLocation = async (req, res) => {
-  if (!req.body.location_name)
-    throw new BadRequestError();
+  if (!req.body.location_name) throw new BadRequestError();
   const newLocation = await service.createLocation(req.body);
   return new CREATED({
     message: "Location created successfully",
@@ -44,11 +43,9 @@ const updateLocation = async (req, res) => {
     message: "Location updated successfully",
     metadata: updatedLocation,
   }).send(req, res);
-
 };
 
 const deleteLocation = async (req, res) => {
-
   const deletedLocation = await service.deleteLocation(req.params._id);
   if (!deletedLocation) throw new NotFoundError("Location not found");
   return new OK({ message: "Location deleted successfully" }).send(req, res);
@@ -58,5 +55,5 @@ module.exports = {
   updateLocation,
   createLocation,
   getLocationById,
-  getAllLocations
-}
+  getAllLocations,
+};

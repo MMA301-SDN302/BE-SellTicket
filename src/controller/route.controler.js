@@ -64,6 +64,10 @@ const getSearchRoutes = async (req, res) => {
       req,
       res
     );
+    return new OK({ message: "Route search result OK", metadata: cars }).send(
+      req,
+      res
+    );
   } catch (error) {
     return res.status(500).json({
       status: "error",

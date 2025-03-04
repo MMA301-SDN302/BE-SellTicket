@@ -19,6 +19,8 @@ io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
   if (userId != "undefined") {
     const existingUser = userSocketMap[userId];
+    console.log("existingUser", userId);
+
     if (existingUser) {
       io.to(existingUser).emit("forceDisconnect");
       delete userSocketMap[userId];
@@ -34,4 +36,4 @@ io.on("connection", (socket) => {
   });
 });
 
-module.exports = { app, io, server };
+module.exports = { app, io, server, getReceiverSocketId };

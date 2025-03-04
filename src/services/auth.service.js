@@ -27,7 +27,7 @@ const {
   generateJwtToken,
 } = require("./bcrypt.service");
 const { sendOTP } = require("./sms.service");
-
+const { createDefaultConversation } = require("./message.service");
 const login = async ({ phoneNumber, password, traceId }) => {
   logger.log("AuthService", [
     "Login",
@@ -157,7 +157,7 @@ const signUp = async ({
     otp_sign: dataEncoded,
   });
   // send OTP to phone number
-  //await sendOTP(mobilePhone, otpNumber);
+  await sendOTP(mobilePhone, otpNumber);
   return { mobilePhone: mobilePhone };
 };
 const verifyOtp = async ({ otpNumber, mobilePhone, sendType, traceId }) => {
@@ -331,6 +331,9 @@ const verifySignUp = async (otpData, mobilePhone) => {
     user._id,
     user.mobilePhone
   );
+  // create Default Conversation
+  // await createDefaultConversation(user._id);
+
   return {
     user: {
       userId: user._id,

@@ -1,5 +1,5 @@
 const cron = require("node-cron");
-const tripService = require("./trip.service");
+const tripService = require("../services/trip.service");
 
 cron.schedule("0 6 * * *", async () => {
   try {
