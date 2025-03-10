@@ -100,7 +100,7 @@ const createTokenService = async (userId, mobilePhone) => {
   });
   return { accessToken, refreshToken };
 };
-const logout = async () => {};
+const logout = async () => { };
 
 const signUp = async ({
   password,
@@ -399,6 +399,50 @@ const refreshToken = async ({ refreshToken, traceId }) => {
     refreshToken: newRefreshToken,
   };
 };
+const changePassword = async ({ password, newPassword, confirmPassword, userId, mobilePhone, traceId }) => {
+  logger.log("AuthService", [
+    "ChangePassword",
+    { requestId: traceId },
+    {
+      password,
+      newPassword,
+      confirmPassword,
+      userId,
+      mobilePhone,
+    },
+  ]);
+  const isValid = await isMissingObjectData({
+    password,
+    newPassword,
+    confirmPassword,
+    userId,
+    mobilePhone,
+  });
+  if (isValid.length > 0) {
+    throw new BadRequestError(`Missing ${isValid}`, ErrorCodes.MISSING_FIELD);
+  }
+  const isValidPhone = await isPhoneNumber(mobilePhone);
+  if (!isValidPhone) {
+    throw new BadRequestError(
+      `Invalid phone number`,
+      ErrorCodes.INVALID_PHONE_NUMBER
+    );
+  }
+  const user = await findUserByIdAndPhoneNumber(userId, mobilePhone);
+  if (!user) {
+    throw new NotFoundError("User Not Found", ErrorCodes.INVALID_CREDENTIALS);
+  }
+
+  // check password
+  const isMatch = await comparePassword(password, user.password);
+
+  if (!isMatch) {
+    throw new BadRequestError("Old password is wrong ", ErrorCodes.INVALID_CREDENTIALS);
+  }
+  const newPasswordHash = await hashPassword(newPassword);
+  await updatePassword(userId, newPasswordHash);
+  return {};
+};
 module.exports = {
   login,
   logout,
@@ -407,5 +451,5 @@ module.exports = {
   resetPassword,
   verifyOtp,
   resendOtp,
-  refreshToken,
+  refreshToken, changePassword
 };

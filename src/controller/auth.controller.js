@@ -12,6 +12,7 @@ const {
   forgetPassword,
   refreshToken,
   resendOtp,
+  changePassword,
 } = require("../services/auth.service");
 
 class AuthController {
@@ -26,7 +27,7 @@ class AuthController {
       metadata: await login({ ...req.body, traceId: req.traceId }),
     }).send(req, res);
   };
-  logout = async (req, res) => {};
+  logout = async (req, res) => { };
 
   signUp = async (req, res) => {
     logger.log("AuthController", [
@@ -100,6 +101,18 @@ class AuthController {
       metadata: await refreshToken({ ...req.body, traceId: req.traceId }),
     }).send(req, res);
   };
+
+  changePassword = async (req, res) => {
+    logger.log("AuthController", [
+      "changePassword",
+      { requestId: req.traceId },
+      req.body,
+    ]);
+    return new NO_CONTENT({
+      message: "Password is changed",
+      metadata: await changePassword({ ...req.body, traceId: req.traceId }),
+    }).send(req, res);
+  }
 }
 
 module.exports = new AuthController();

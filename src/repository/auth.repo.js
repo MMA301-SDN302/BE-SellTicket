@@ -24,5 +24,5 @@ module.exports = {
   isExistUser,
   findUserByPhoneNumber,
   findUserByIdAndPhoneNumber,
-  updatePassword,
+  updatePassword
 };
