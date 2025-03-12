@@ -6,14 +6,12 @@ const sendMessage = async ({
   message,
   senderId,
   receiverId,
-  senderType,
   traceId,
 }) => {
   const isValid = await isMissingObjectData({
     message,
     senderId,
     receiverId,
-    senderType,
   });
   if (isValid) {
     throw new BadRequestError(`Missing ${isValid}`, ErrorCodes.MISSING_FIELD);
@@ -24,6 +22,7 @@ const sendMessage = async ({
         $all: [senderId],
       },
     });
+    // TH1 : user gửi tin nhắn lần dầu 
     // if (!conversation) {
     //   throw new BadRequestError("Conversation not found", ErrorCodes.NOT_FOUND);
     // }

@@ -3,7 +3,7 @@ const { OK, CREATED } = require("../core/response/success.response.js");
 const {
   NotFoundError,
   BadRequestError,
-} = require("../core/response/error.response.js")
+} = require("../core/response/error.response.js");
 
 const getAllRoutes = async (req, res) => {
   const routes = await service.getAllRoutes();

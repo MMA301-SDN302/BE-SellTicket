@@ -156,6 +156,91 @@ const getCarByRoute = async (startLocationName, endLocationName, timeStart) => {
   }
 };
 
+const createDefaultRouter = async (tripId) => {
+  const trip = await Trip.findById(tripId).populate("car");
+  for (let i = 1; i < 31; i++) {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() + i);
+    const startTime = trip.stopMap[0].time.split(":");
+    startDate.setHours(startTime[0], startTime[1], 0);
+    const offsetEndTime = trip.stopMap[trip.stopMap.length - 1].offsetTime;
+    const endTime = new Date(startDate.getTime() + offsetEndTime * 60 * 1000);
+
+    const newTrip = await Route.create({
+      car: trip.car._id,
+      trip: trip._id,
+      name: `${trip.stopMap[0].name} - ${
+        trip.stopMap[trip.stopMap.length - 1].name
+      }`,
+      routeDescription: `Chuyến đi ngày ${startDate.getDate()}/${
+        startDate.getMonth() + 1
+      }/${startDate.getFullYear()}`,
+      routeStartTime: startDate,
+      routeEndTime: endTime,
+      stopMap: trip.stopMap,
+      remainingSeat: trip.car.amount_seat,
+    });
+
+    const seatsToCreate = [];
+    // sửa số ghế ở đây
+    const seatFloor = ["A", "B", "C", "D", "E", "F"];
+    for (let k = 0; k < trip.car.amount_seat; k++) {
+      seatsToCreate.push({
+        insertOne: {
+          document: {
+            route: newTrip._id,
+            floor: Math.floor(k / (trip.car.amount_seat / 2)) + 1,
+            seatNumber: seatFloor[k % 6] + Math.floor(k / 6),
+            isAvailable: true,
+          },
+        },
+      });
+    }
+    seatsToCreate.length > 0 && (await Seat.bulkWrite(seatsToCreate));
+  }
+};
+
+const createDailyRouter = async (trip) => {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() + 30);
+  const startTime = trip.stopMap[0].time.split(":");
+  startDate.setHours(startTime[0], startTime[1], 0);
+  const offsetEndTime = trip.stopMap[trip.stopMap.length - 1].offsetTime;
+  const endTime = new Date(startDate.getTime() + offsetEndTime * 60 * 1000);
+
+  const newTrip = await Route.create({
+    car: trip.car._id,
+    trip: trip._id,
+    name: `${trip.stopMap[0].name} - ${
+      trip.stopMap[trip.stopMap.length - 1].name
+    }`,
+    routeDescription: `Chuyến đi ngày ${startDate.getDate()}/${
+      startDate.getMonth() + 1
+    }/${startDate.getFullYear()}`,
+    routeStartTime: startDate,
+    routeEndTime: endTime,
+    stopMap: trip.stopMap,
+    remainingSeat: trip.car.amount_seat,
+  });
+
+  const seatsToCreate = [];
+  // sửa số ghế ở đây
+  const seatFloor = ["A", "B", "C", "D", "E", "F"];
+  for (let k = 0; k < trip.car.amount_seat; k++) {
+    seatsToCreate.push({
+      insertOne: {
+        document: {
+          route: newTrip._id,
+          floor: Math.floor(k / (trip.car.amount_seat / 2)) + 1,
+          seatNumber: seatFloor[k % 6] + Math.floor(k / 6),
+          isAvailable: true,
+        },
+      },
+    });
+  }
+  seatsToCreate.length > 0 && (await Seat.bulkWrite(seatsToCreate));
+};
+
 module.exports = {
   getAllRoutes,
   getRouteById,
@@ -163,4 +248,6 @@ module.exports = {
   updateRoute,
   deleteRoute,
   getCarByRoute,
+  createDefaultRouter,
+  createDailyRouter,
 };

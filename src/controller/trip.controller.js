@@ -1,21 +1,16 @@
 const {
-  createTrip,
   deleteTripsByRoute,
   getTripById,
+  getTrips,
 } = require("../repository/trip.repo.js");
 const { OK, CREATED } = require("../core/response/success.response.js");
 const tripService = require("../services/trip.service");
 const { InternalServerError } = require("../core/response/error.response.js");
 const createTripController = async (req, res, next) => {
-  try {
-    const newTrip = await createTrip(req.body);
-    res.status(201).json({
-      message: "Trip created successfully",
-      trip: newTrip,
-    });
-  } catch (error) {
-    next(error);
-  }
+  return new CREATED({
+    message: "Tạo chuyến đi thành công",
+    metadata: await tripService.createTrips(req.body),
+  }).send(req, res);
 };
 
 const deleteTripController = async (req, res, next) => {
@@ -56,9 +51,17 @@ async function createAutoTrip(req, res) {
     throw new InternalServerError("Lỗi khi tạo chuyến đi tự động", err.message);
   }
 }
+
+const getAllTrips = async (req, res) => {
+  return new OK({
+    message: "Danh sách chuyến đi",
+    metadata: await getTrips(),
+  }).send(req, res);
+};
 module.exports = {
   createTripController,
   deleteTripController,
   getTripByIdController,
   createAutoTrip,
+  getAllTrips,
 };

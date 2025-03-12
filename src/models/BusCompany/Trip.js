@@ -3,23 +3,34 @@ const mongoose = require("mongoose");
 const tripSchema = new mongoose.Schema(
   {
     car: { type: mongoose.Schema.Types.ObjectId, ref: "Car", required: true },
-    depature: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "StopMap",
-      default: null,
-      required: true,
-    },
-    arrive: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "StopMap",
-      default: null,
+    stopMap: {
+      type: [
+        {
+          name: { type: String, required: true },
+          time: { type: String, required: true },
+          offsetTime: { type: Number, required: true },
+          code: { type: String, required: true },
+          AODAddress: { type: String, required: true },
+        },
+      ],
       required: true,
     },
     price: { type: Number, required: true },
-    isDaily: { type: Number, required: true }, // xét lịch trình tự động
-    tripDate: { type: Date, required: true },
-    estimatedArrivalDate: { type: Date, default: null },
-
+    weekTimeRun: [
+      {
+        type: String,
+        enum: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ],
+        required: true,
+      },
+    ], // xét lịch trình tự động
   },
   {
     collection: "Trips",
