@@ -22,6 +22,25 @@ class MessageController {
     }
   };
 
+  // Get all conversations for admin
+  getAdminConversations = async (req, res, next) => {
+    try {
+      const adminId = req.user._id;
+      
+      if (!req.user.role || !req.user.role.includes('admin')) {
+        throw new BadRequestError("Unauthorized: Admin access required");
+      }
+      
+      const conversations = await MessageService.getAdminConversations(adminId);
+      return new SuccessResponse({
+        message: "Admin conversations retrieved successfully",
+        metadata: conversations,
+      }).send(res);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   // Get messages between two users
   getMessages = async (req, res, next) => {
     try {

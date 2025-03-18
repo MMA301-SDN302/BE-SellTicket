@@ -70,9 +70,12 @@ const login = async ({ phoneNumber, password, traceId }) => {
       userId: user._id,
       phoneNumber: user.mobilePhone,
       displayName: `${user.firstName} ${user.lastName}`,
+      firstName: user.firstName,
+      lastName: user.lastName,
       gender: user.sex,
       dateOfBirth: user.dateOfBirth,
       avatar: user.avatar,
+      role: user.role || [],
     },
     token: {
       accessToken: accessToken,

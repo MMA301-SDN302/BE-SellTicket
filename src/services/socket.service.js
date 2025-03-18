@@ -1,5 +1,6 @@
 const User = require("../models/Auth/User");
 const Message = require("../models/Message/message");
+const Conversation = require("../models/Message/conversation");
 const { io } = require("../config/socket.config");
 const mongoose = require("mongoose");
 
@@ -127,19 +128,55 @@ const setupSocket = (messageService) => {
 
     socket.on("adminConnect", async ({ adminId }) => {
       try {
+        console.log("Admin connected, fetching conversations for:", adminId);
+        
+        // Xác định nếu người dùng này thực sự là admin
+        const adminUser = await User.findById(adminId);
+        if (!adminUser || !adminUser.role || !adminUser.role.includes('admin')) {
+          socket.emit("messageError", { error: "Unauthorized: Not an admin account" });
+          return;
+        }
+        
         // Lấy tất cả conversations cho admin
-        const conversations = await Conversation.find({})
-          .populate("participants", "firstName lastName avatar isOnline")
-          .populate("lastMessage");
+        const conversations = await Conversation.find({
+          participants: { $in: [adminId] }
+        })
+        .populate({
+          path: 'participants',
+          select: 'firstName lastName avatar isOnline role'
+        })
+        .populate({
+          path: 'lastMessage',
+          populate: {
+            path: 'senderId receiverId',
+            select: 'firstName lastName avatar'
+          }
+        })
+        .sort({ updatedAt: -1 });
 
-        socket.emit("adminConversations", conversations);
+        // Tính toán số tin nhắn chưa đọc cho mỗi hội thoại
+        const conversationsWithUnread = await Promise.all(
+          conversations.map(async (conv) => {
+            // Đếm số tin nhắn chưa đọc (gửi cho admin nhưng chưa đọc)
+            const unreadCount = await Message.countDocuments({
+              _id: { $in: conv.messages },
+              receiverId: adminId,
+              read: false
+            });
+
+            // Chuyển đổi thành đối tượng thuần túy để có thể thêm thuộc tính
+            const convObj = conv.toObject();
+            convObj.unreadCount = unreadCount;
+            return convObj;
+          })
+        );
+
+        socket.emit("adminConversations", conversationsWithUnread);
       } catch (error) {
         console.error("Error loading admin conversations:", error);
         socket.emit("messageError", { error: error.message });
       }
     });
-
-    // Client side code
   });
 
   return io;

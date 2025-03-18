@@ -226,14 +226,57 @@ const getUserConversations = async (userId) => {
   return conversations;
 };
 
-const getAdminConversations = async () => {
+const getAdminConversations = async (adminId) => {
   try {
-    const conversations = await Conversation.find({})
-      .populate('participants', 'firstName lastName avatar isOnline')
-      .populate('lastMessage');
-    return conversations;
+    // Xác thực adminId
+    if (!adminId) {
+      throw new BadRequestError("Admin ID is required");
+    }
+
+    // Lấy tất cả các cuộc hội thoại có admin tham gia
+    const conversations = await Conversation.find({
+      participants: { $in: [adminId] }
+    })
+    .populate({
+      path: 'participants',
+      select: 'firstName lastName avatar isOnline role phoneNumber'
+    })
+    .populate({
+      path: 'lastMessage',
+      populate: {
+        path: 'senderId receiverId',
+        select: 'firstName lastName avatar'
+      }
+    })
+    .sort({ updatedAt: -1 });
+
+    // Tính toán số tin nhắn chưa đọc cho mỗi hội thoại
+    const conversationsWithUnread = await Promise.all(
+      conversations.map(async (conv) => {
+        // Đếm số tin nhắn chưa đọc (gửi cho admin nhưng chưa đọc)
+        const unreadCount = await Message.countDocuments({
+          _id: { $in: conv.messages },
+          receiverId: adminId,
+          read: false
+        });
+
+        // Chuyển đổi thành đối tượng thuần túy để có thể thêm thuộc tính
+        const convObj = conv.toObject();
+        convObj.unreadCount = unreadCount;
+
+        // Lấy người dùng không phải admin trong hội thoại để làm đối tượng chat
+        const otherParticipant = convObj.participants.find(
+          p => p._id.toString() !== adminId.toString()
+        );
+        
+        convObj.chatUser = otherParticipant || null;
+        
+        return convObj;
+      })
+    );
+
+    return conversationsWithUnread;
   } catch (error) {
-    console.error("Error getting admin conversations:", error);
     throw error;
   }
 };
