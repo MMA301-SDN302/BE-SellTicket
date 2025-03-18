@@ -31,10 +31,9 @@ const deleteRoute = async (_id) => {
 const getRouteBySearch = async (startDate, endDate) => {
   return await Route.find({
     routeStartTime: { $gte: startDate, $lte: endDate },
-  }).populate({
-    path: "car",
-    populate: { path: "buscompany_id", model: "BusCompany" },
-  }).populate("startLocation endLocation");
+  })
+    .populate({ path: "car", populate: { path: "buscompany_id", model: "BusCompany" } })
+    .populate("trip");
 };
 
 module.exports = {

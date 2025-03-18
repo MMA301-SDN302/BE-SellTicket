@@ -3,7 +3,8 @@ const { OK, CREATED } = require("../core/response/success.response.js");
 const {
   NotFoundError,
   BadRequestError,
-} = require("../core/response/error.response.js");
+  InternalServerError,
+ } = require("../core/response/error.response.js");
 
 const getAllRoutes = async (req, res) => {
   const routes = await service.getAllRoutes();
@@ -59,23 +60,23 @@ const getSearchRoutes = async (req, res) => {
     const endLocation = decodeURIComponent(req.query.endLocation);
     const date = decodeURIComponent(req.query.date);
     const cars = await service.getCarByRoute(startLocation, endLocation, date);
-    // return res.status(200).json({ status: "success", data: cars });
-    return new OK({ message: "Route search result OK", metadata: cars }).send(
-      req,
-      res
-    );
-    return new OK({ message: "Route search result OK", metadata: cars }).send(
-      req,
-      res
-    );
+
+    return new OK({ message: "Route search result OK", metadata: cars }).send(req, res);
   } catch (error) {
+    console.error("getSearchRoutes error:", error);
+
+    if (error instanceof BadRequestError) {
+      return error.send(req, res);
+    }
+
     return res.status(500).json({
       status: "error",
       code: 500,
-      message: error.message,
+      message: "Internal Server Error",
     });
   }
 };
+
 
 module.exports = {
   getAllRoutes,
