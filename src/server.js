@@ -6,6 +6,8 @@ const { app } = require("./config/socket.config.js");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 const logger = require("./logger");
+const { setupSocket } = require("./services/socket.service");
+const MessageService = require("./services/message.service");
 
 class App {
   setup = async () => {
@@ -84,7 +86,10 @@ class App {
         });
       }
     });
+
+    setupSocket(MessageService);
   };
+ 
 }
 const appSetup = new App();
 appSetup.setup();

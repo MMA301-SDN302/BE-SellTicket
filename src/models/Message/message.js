@@ -6,7 +6,7 @@ const COLLECTION_NAME = "Messages";
 const messageSchema = new Schema(
   {
     senderId: {
-      type: mongoose.Schema.Types.ObjectId | String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },

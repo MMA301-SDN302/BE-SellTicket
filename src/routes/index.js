@@ -10,5 +10,6 @@ router.use("/tickets", require("./ticket.router"))
 router.use("/trips", require("./trip.router"))
 router.use("/seat", require("./seat.router"))
 router.use("/profile", require("./user.router"))
+router.use("/message", require("./message.router"))
 
 module.exports = router;
