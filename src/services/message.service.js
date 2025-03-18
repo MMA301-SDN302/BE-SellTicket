@@ -5,8 +5,14 @@ const { ErrorCodes } = require("../core/errorConstant/httpStatusCode");
 const User = require("../models/Auth/User");
 const { getReceiverSocketId, io } = require("../config/socket.config");
 
-const sendMessage = async ({ senderId, receiverId, content }) => {
+const sendMessage = async (senderId, receiverId, content) => {
   try {
+    console.log('Sending message:', {
+      senderId,
+      receiverId,
+      content
+    });
+
     // Kiểm tra thiếu dữ liệu
     if (!senderId || !receiverId || !content) {
       throw new BadRequestError(
@@ -71,8 +77,13 @@ const sendMessage = async ({ senderId, receiverId, content }) => {
 
     // Gửi tin nhắn real-time nếu người nhận đang online
     const receiverSocketId = getReceiverSocketId(actualReceiverId);
+    console.log('Receiver socket ID:', receiverSocketId);
+
     if (receiverSocketId) {
+      console.log('Emitting message to socket:', receiverSocketId);
       io.to(receiverSocketId).emit("receiveMessage", populatedMessage);
+    } else {
+      console.log('No socket found for receiver:', actualReceiverId);
     }
 
     return populatedMessage;
