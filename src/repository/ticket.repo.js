@@ -22,6 +22,7 @@ const createTicket = async (data) => {
   const ticket = await Ticket.create(data);
   return ticket;
 };
+
 const createManyTickets = async (ticketsData) => {
   return await Ticket.insertMany(ticketsData); // Chèn nhiều vé một lần
 };
@@ -61,10 +62,22 @@ const autoCancelUnpaidTickets = async () => {
   }
 };
 
+const getTicketsByRoute = async (routeId) => {
+  return await Ticket.find({ route_id: routeId }).lean();
+};
+
+const getLastTicketNo = async () => {
+  const lastTicket = await Ticket.findOne().sort({ ticket_No: -1 }).lean();
+  return lastTicket ? parseInt(lastTicket.ticket_No, 10) : 100000;
+};
+
 module.exports = {
   getAllTickets,
   getTicketById,
   createTicket,
   cancelTicket,
-  autoCancelUnpaidTickets
+  autoCancelUnpaidTickets,
+  getTicketsByRoute,
+  createManyTickets,
+  getLastTicketNo,
 };
