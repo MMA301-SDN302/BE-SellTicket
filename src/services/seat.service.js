@@ -1,8 +1,7 @@
 const Seat = require("../models/BusCompany/Seat.js");
-const Ticket = require("../models/BusCompany/Ticket.js");
 const BusRoute = require("../models/BusCompany/Route.js");
-const CarModel = require("../models/BusCompany/Car.js");
 const { BadRequestError, InternalServerError } = require("../core/response/error.response.js");
+const reposTicket = require("../repository/ticket.repo.js");
 
 const getSeatsByRoute = async (routeId, startLocationName, endLocationName) => {
   try {
@@ -11,48 +10,42 @@ const getSeatsByRoute = async (routeId, startLocationName, endLocationName) => {
       throw new BadRequestError("Không tìm thấy thông tin xe cho tuyến này.");
     }
 
-    const startStop = route.stopMap.find(stop => stop.name === startLocationName);
-    const endStop = route.stopMap.find(stop => stop.name === endLocationName);
+    const startStopIndex = route.stopMap.findIndex(stop => stop.name === startLocationName);
+    const endStopIndex = route.stopMap.findIndex(stop => stop.name === endLocationName);
 
-    if (!startStop || !endStop) {
+    if (startStopIndex === -1 || endStopIndex === -1) {
       throw new BadRequestError("Không tìm thấy điểm dừng phù hợp.");
     }
 
-    if (route.stopMap.indexOf(startStop) >= route.stopMap.indexOf(endStop)) {
+    if (startStopIndex >= endStopIndex) {
       throw new BadRequestError("Điểm đến phải sau điểm xuất phát.");
     }
 
-    const totalStops = route.stopMap.length - 1;
-    const distanceRatio = Math.abs(route.stopMap.indexOf(endStop) - route.stopMap.indexOf(startStop)) / totalStops;
-    const pricePart = Math.round(route.trip.price * distanceRatio);
-
     const seats = await Seat.find({ route: routeId }).lean();
-    console.log("Total seats on the bus:", seats.length);
-
     if (!seats.length) {
       throw new BadRequestError("Không tìm thấy ghế nào trên xe này.");
     }
 
-    const bookedTickets = await Ticket.find({ trip_id: routeId }).lean();
-    console.log("Total booked tickets:", bookedTickets.length);
+    const bookedTickets = await reposTicket.getTicketsByRoute(routeId);
+    console.log("Booked Tickets:", bookedTickets);
 
     const updatedSeats = seats.map(seat => {
-      const isBooked = bookedTickets.some(ticket => {
-        const ticketStartStop = route.stopMap.find(stop => stop.name === ticket.depature);
-        const ticketEndStop = route.stopMap.find(stop => stop.name === ticket.arrive);
+      const bookedTicket = bookedTickets.find(ticket => {
+        if (ticket.ticket_seat !== seat.seatNumber) return false;
 
-        if (!ticketStartStop || !ticketEndStop) return false;
+        const ticketStartIndex = route.stopMap.findIndex(stop => stop.name === ticket.startlocation);
+        const ticketEndIndex = route.stopMap.findIndex(stop => stop.name === ticket.endlocation);
 
-        return (
-          route.stopMap.indexOf(ticketStartStop) < route.stopMap.indexOf(endStop) &&
-          route.stopMap.indexOf(ticketEndStop) > route.stopMap.indexOf(startStop)
-        );
+        if (ticketStartIndex === -1 || ticketEndIndex === -1) return false;
+
+        return ticketStartIndex < endStopIndex && ticketEndIndex > startStopIndex;
       });
 
       return {
         id: seat._id.toString(),
         seatNumber: seat.seatNumber,
-        isAvailable: !isBooked,
+        isAvailable: !bookedTicket,
+        ticket_status: bookedTicket ? bookedTicket.ticket_status : "available",
         floor: seat.floor || 1,
       };
     });
@@ -68,16 +61,109 @@ const getSeatsByRoute = async (routeId, startLocationName, endLocationName) => {
     };
   } catch (error) {
     console.error("Lỗi khi lấy danh sách ghế:", error.message);
-    
+
     if (error instanceof BadRequestError) {
       throw error;
     }
-    
+
     throw new InternalServerError("Có lỗi xảy ra khi lấy danh sách ghế.");
   }
 };
 
+const getSeatStatus = async (routeId, seatId) => {
+  try {
+    const route = await BusRoute.findById(routeId).populate("trip");
+    if (!route || !route.car) {
+      throw new BadRequestError("Không tìm thấy thông tin xe cho tuyến này.");
+    }
 
-module.exports = { 
+    const seat = await Seat.findOne({ _id: seatId, route: routeId }).lean();
+    if (!seat) {
+      throw new BadRequestError("Không tìm thấy thông tin ghế này.");
+    }
+
+    const bookedTickets = await reposTicket.getTicketsByRoute(routeId);
+
+    const bookedTicket = bookedTickets.find(ticket => {
+      if (ticket.ticket_seat !== seat.seatNumber) return false;
+
+      const ticketStartIndex = route.stopMap.findIndex(stop => stop.name === ticket.startlocation);
+      const ticketEndIndex = route.stopMap.findIndex(stop => stop.name === ticket.endlocation);
+
+      if (ticketStartIndex === -1 || ticketEndIndex === -1) return false;
+
+      return ticketStartIndex < route.stopMap.length && ticketEndIndex > 0;
+    });
+
+    return {
+      seat: {
+        id: seat._id.toString(),
+        seatNumber: seat.seatNumber,
+        isAvailable: !bookedTicket,
+        ticket_status: bookedTicket ? bookedTicket.ticket_status : "available",
+        floor: seat.floor || 1,
+      },
+    };
+  } catch (error) {
+    console.error("Lỗi khi lấy trạng thái ghế:", error.message);
+
+    if (error instanceof BadRequestError) {
+      throw error;
+    }
+
+    throw new InternalServerError("Có lỗi xảy ra khi lấy trạng thái ghế.");
+  }
+};
+
+const createTicket = async (routeId, seatIds, userId, from, to, price, passenger) => {
+  try {
+    const route = await BusRoute.findById(routeId).populate("trip");
+    if (!route || !route.car) {
+      throw new BadRequestError("Không tìm thấy thông tin xe cho tuyến này.");
+    }
+
+    const seats = await Seat.find({ _id: { $in: seatIds }, route: routeId }).lean();
+    if (!seats.length) {
+      throw new BadRequestError("Không tìm thấy thông tin ghế.");
+    }
+
+    const bookedTickets = await reposTicket.getTicketsByRoute(routeId);
+    const unavailableSeats = seatIds.filter(seatId => 
+      bookedTickets.some(ticket => ticket.ticket_seat === seats.find(s => s._id.toString() === seatId)?.seatNumber)
+    );
+
+    if (unavailableSeats.length) {
+      throw new BadRequestError(`Ghế sau đã được đặt: ${unavailableSeats.join(", ")}`);
+    }
+
+    let lastTicketNo = await reposTicket.getLastTicketNo();
+
+    const ticketsData = seatIds.map(seatId => ({
+      ticket_No: (++lastTicketNo).toString(),
+      route_id: routeId,
+      seat_id: seatId,
+      user_id: userId,
+      startlocation: from,
+      endlocation: to,
+      ticket_price: price, 
+      passenger: "passenger", 
+      ticket_status: "pending",
+      ticket_seat: seats.find(s => s._id.toString() === seatId).seatNumber,
+    }));
+
+    const tickets = await reposTicket.createManyTickets(ticketsData);
+
+    return { tickets };
+  } catch (error) {
+    console.error("Lỗi khi tạo vé:", error.message);
+    throw error instanceof BadRequestError ? error : new InternalServerError("Có lỗi xảy ra khi tạo vé.");
+  }
+};
+
+
+
+module.exports = {
   getSeatsByRoute,
+  getSeatStatus,
+  createTicket,
 };
