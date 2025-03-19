@@ -4,6 +4,7 @@ const { BadRequestError } = require("../core/response/error.response");
 const { ErrorCodes } = require("../core/errorConstant/httpStatusCode");
 const User = require("../models/Auth/User");
 const { getReceiverSocketId, io } = require("../config/socket.config");
+const mongoose = require("mongoose");
 
 const sendMessage = async (senderId, receiverId, content) => {
   try {
@@ -213,17 +214,31 @@ const markMessageAsRead = async (messageId) => {
 };
 
 const getUserConversations = async (userId) => {
-  const conversations = await Conversation.find({
-    participants: userId
-  }).populate({
-    path: 'participants',
-    select: 'firstName lastName avatar isOnline'
-  }).populate({
-    path: 'lastMessage',
-    select: 'content createdAt read senderId receiverId'
-  }).sort({ updatedAt: -1 });
-
-  return conversations;
+  try {
+    console.log('Fetching conversations for userId:', userId);
+    
+    // Validate userId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      console.error(`Invalid userId format: ${userId}`);
+      throw new BadRequestError("Invalid user ID format");
+    }
+    
+    const conversations = await Conversation.find({
+      participants: userId
+    }).populate({
+      path: 'participants',
+      select: 'firstName lastName avatar isOnline'
+    }).populate({
+      path: 'lastMessage',
+      select: 'content createdAt read senderId receiverId'
+    }).sort({ updatedAt: -1 });
+    
+    console.log(`Found ${conversations.length} conversations for userId: ${userId}`);
+    return conversations;
+  } catch (error) {
+    console.error('Error in getUserConversations:', error);
+    throw error;
+  }
 };
 
 const getAdminConversations = async (adminId) => {
