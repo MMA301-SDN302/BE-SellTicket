@@ -13,4 +13,13 @@ router.get('/config', asyncHandler(controller.getPaymentConfig));
 router.post('/stripe-sheet', asyncHandler(controller.createStripeSheet));
 router.post('/payos-payment', asyncHandler(controller.createPayosPayment));
 
+// Route to get Stripe balance
+router.get('/stripe-balance', asyncHandler(controller.getStripeBalance));
+
+// Route to get payment list
+router.get('/list', asyncHandler(controller.getPaymentList));
+
+// Route to get payment statistics
+router.get('/stats', asyncHandler(controller.getPaymentStats));
+
 module.exports = router; 

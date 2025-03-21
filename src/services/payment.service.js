@@ -8,7 +8,7 @@ class PaymentService {
   async createPaymentIntent(ticketId) {
     try {
       // Find the ticket in the database
-      const ticket = await Ticket.findById(ticketId).populate('trip_id');
+      const ticket = await Ticket.findById(ticketId);
       
       if (!ticket) {
         throw new NotFoundError('Ticket not found');
@@ -21,7 +21,7 @@ class PaymentService {
       
       // Create a payment intent
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(ticket.ticket_price * 100), // Convert to cents (Stripe uses smallest currency unit)
+        amount: ticket.ticket_price, // VND is a zero-decimal currency, no need to multiply by 100
         currency: 'vnd',
         metadata: {
           ticketId: ticket._id.toString(),
@@ -126,7 +126,7 @@ class PaymentService {
   async createStripeSheet(ticketId, customerInfo = {}) {
     try {
       // Find the ticket in the database
-      const ticket = await Ticket.findById(ticketId).populate('trip_id');
+      const ticket = await Ticket.findById(ticketId);
       
       if (!ticket) {
         throw new NotFoundError('Ticket not found');
@@ -207,7 +207,7 @@ class PaymentService {
       
       // Create a payment intent
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(ticket.ticket_price * 100), // Convert to cents (Stripe uses smallest currency unit)
+        amount: ticket.ticket_price, // VND is a zero-decimal currency, no need to multiply by 100
         currency: 'vnd',
         customer: customer.id,
         metadata: {

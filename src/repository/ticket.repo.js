@@ -7,7 +7,7 @@ const getAllTickets = async () => {
 };
 
 const getTicketById = async (_id) => {
-  return await Ticket.findOne({ _id }).populate("_id");
+  return await Ticket.findOne({ _id });
 };
 
 const createTicket = async (data) => {
@@ -19,7 +19,8 @@ const createTicket = async (data) => {
   trip.availableSeats -= 1;
   await trip.save();
 
-  const ticket = await Ticket.create(data);
+  const { trip_id, ...ticketData } = data;
+  const ticket = await Ticket.create(ticketData);
   return ticket;
 };
 const createManyTickets = async (ticketsData) => {
@@ -31,12 +32,6 @@ const cancelTicket = async (id) => {
 
   const ticket = await Ticket.findById(id);
   if (!ticket) throw new NotFoundError("Ticket not found");
-
-  const trip = await Trip.findById(ticket.trip_id);
-  if (trip) {
-    trip.availableSeats += 1;
-    await trip.save();
-  }
 
   ticket.ticket_status = "cancelled";
   await ticket.save();
