@@ -82,6 +82,19 @@ const sendMessage = async (senderId, receiverId, content) => {
     if (receiverSocketId) {
       console.log('Emitting message to socket:', receiverSocketId);
       io.to(receiverSocketId).emit("receiveMessage", populatedMessage);
+      
+      // Broadcast updated online users to ensure status is current
+      // Get online users from socket config since we can't import from socket.service (circular dependency)
+      const { getOnlineUsers } = require("../config/socket.config");
+      if (typeof getOnlineUsers === 'function') {
+        getOnlineUsers();
+      } else {
+        // Fallback if function doesn't exist
+        io.emit("getOnlineUsers", {
+          users: Object.keys(global.userSocketMap || {}),
+          admin: Object.keys(global.adminSocketMap || {})
+        });
+      }
     } else {
       console.log('No socket found for receiver:', actualReceiverId);
     }

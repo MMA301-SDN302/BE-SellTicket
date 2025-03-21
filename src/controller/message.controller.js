@@ -69,11 +69,11 @@ class MessageController {
         throw new BadRequestError("Sender ID, Receiver ID, and content are required");
       }
       
-      const message = await MessageService.sendMessage({
+      const message = await MessageService.sendMessage(
         senderId,
         receiverId,
-        content,
-      });
+        content
+      );
       
       return new SuccessResponse({
         message: "Message sent successfully",

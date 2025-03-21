@@ -15,45 +15,57 @@ const io = new Server(server, {
 });
 
 const userSocketMap = {};
+const adminSocketMap = {};
 
 const getReceiverSocketId = (receiverId) => {
-  return userSocketMap[receiverId];
+  return userSocketMap[receiverId] || adminSocketMap[receiverId];
+};
+
+// Function to broadcast online users to all connected clients
+const getOnlineUsers = () => {
+  console.log("Broadcasting online users to all clients");
+  
+  io.emit("getOnlineUsers", {
+    users: Object.keys(userSocketMap),
+    admin: Object.keys(adminSocketMap || {})
+  });
+  
+  return {
+    users: Object.keys(userSocketMap),
+    admin: Object.keys(adminSocketMap || {})
+  };
 };
 
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
   const role = socket.handshake.query.role || "user";
   
-  if (userId != "undefined") {
-    const existingUser = userSocketMap[userId];
-    console.log("User connected:", userId, "Role:", role);
-
-    if (existingUser) {
-      io.to(existingUser).emit("forceDisconnect");
-      delete userSocketMap[userId];
-    }
-    userSocketMap[userId] = socket.id;
-  }
+  console.log(`New socket connection: ${socket.id} for user ${userId} with role ${role}`);
   
-  io.emit("getOnlineUsers", Object.keys(userSocketMap));
-  
-  socket.on("sendMessage", async ({ senderId, receiverId, content }) => {
-    try {
-      console.log("Message received:", { senderId, receiverId, content });
-      
-      const receiverSocketId = getReceiverSocketId(receiverId);
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("receiveMessage", {
-          senderId,
-          receiverId,
-          content,
-          createdAt: new Date()
-        });
+  if (userId && userId !== "undefined") {
+    if (role === "admin") {
+      // If this admin already has a socket connection, disconnect the old one
+      const existingAdminSocket = adminSocketMap[userId];
+      if (existingAdminSocket && existingAdminSocket !== socket.id) {
+        console.log(`Admin ${userId} already has socket ${existingAdminSocket}, disconnecting old socket`);
+        io.to(existingAdminSocket).emit("forceDisconnect");
+        delete adminSocketMap[userId];
       }
-    } catch (error) {
-      console.error("Error in sendMessage event:", error);
+      adminSocketMap[userId] = socket.id;
+    } else {
+      // If this user already has a socket connection, disconnect the old one
+      const existingUserSocket = userSocketMap[userId];
+      if (existingUserSocket && existingUserSocket !== socket.id) {
+        console.log(`User ${userId} already has socket ${existingUserSocket}, disconnecting old socket`);
+        io.to(existingUserSocket).emit("forceDisconnect");
+        delete userSocketMap[userId];
+      }
+      userSocketMap[userId] = socket.id;
     }
-  });
+    
+    // Broadcast updated online users to all clients
+    getOnlineUsers();
+  }
   
   socket.on("markMessageAsRead", ({ messageId, senderId }) => {
     try {
@@ -67,9 +79,25 @@ io.on("connection", (socket) => {
   });
   
   socket.on("disconnect", () => {
-    delete userSocketMap[userId];
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    console.log(`Socket ${socket.id} disconnected for user ${userId} with role ${role}`);
+    
+    if (userId && userId !== "undefined") {
+      if (role === "admin") {
+        // Only delete if this socket ID matches the stored one
+        if (adminSocketMap[userId] === socket.id) {
+          delete adminSocketMap[userId];
+        }
+      } else {
+        // Only delete if this socket ID matches the stored one
+        if (userSocketMap[userId] === socket.id) {
+          delete userSocketMap[userId];
+        }
+      }
+      
+      // Broadcast updated online users to all clients
+      getOnlineUsers();
+    }
   });
 });
 
-module.exports = { app, io, server, getReceiverSocketId };
+module.exports = { app, io, server, getReceiverSocketId, getOnlineUsers, userSocketMap, adminSocketMap };
