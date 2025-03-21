@@ -2,6 +2,7 @@ const routeRepository = require("../repository/route.repo.js");
 const Route = require("../models/BusCompany/Route.js");
 const Seat = require("../models/BusCompany/Seat.js");
 const Trip = require("../models/BusCompany/Trip.js");
+const StopMap = require("../models/BusCompany/StopMap.js");
 const { BadRequestError, InternalServerError } = require("../core/response/error.response.js");
 
 const getAllRoutes = async () => {
@@ -165,6 +166,42 @@ const createDailyRouter = async (trip) => {
   seatsToCreate.length > 0 && (await Seat.bulkWrite(seatsToCreate));
 };
 
+const getStopMap = async (startLocation, endLocation, label) => {
+  try {
+    const stopMapData = await StopMap.findOne().lean();
+
+    if (!stopMapData || !stopMapData.stops) {
+      return [];
+    }
+
+    let stops = stopMapData.stops;
+
+    if (label === 1 && startLocation) {
+      stops = stops.filter(
+        (stop) =>
+          stop.stop_name.toLowerCase().includes(startLocation.toLowerCase()) &&
+          stop.stop_name.toLowerCase() !== startLocation.toLowerCase()
+      );
+    } else if (label === 2 && endLocation) {
+      stops = stops.filter(
+        (stop) =>
+          stop.stop_name.toLowerCase().includes(endLocation.toLowerCase()) &&
+          stop.stop_name.toLowerCase() !== endLocation.toLowerCase()
+      );
+    }
+
+    return stops.map((stop) => ({
+      stop_id: stop.stop_id,
+      stop_name: stop.stop_name,
+      latitude: stop.latitude,
+      longitude: stop.longitude,
+    }));
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách điểm dừng:", error);
+    throw new Error("Không thể lấy danh sách điểm dừng.");
+  }
+};
+
 module.exports = {
   getAllRoutes,
   getRouteById,
@@ -174,4 +211,5 @@ module.exports = {
   getCarByRoute,
   createDefaultRouter,
   createDailyRouter,
+  getStopMap,
 };
