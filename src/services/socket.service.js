@@ -116,6 +116,12 @@ const setupSocket = (messageService) => {
           receiverId,
           content
         );
+
+        // Emit tin nhắn đến người nhận
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit("newMessage", savedMessage);
+        }
       } catch (error) {
         console.error("Error in sendMessage event:", error);
         socket.emit("messageError", {

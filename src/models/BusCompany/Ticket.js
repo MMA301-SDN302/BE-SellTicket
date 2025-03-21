@@ -28,16 +28,25 @@ const ticketSchema = new mongoose.Schema(
       enum: ["pending", "confirmed", "cancelled", "completed"],
       default: "pending",
     },
-    trip_id: {
+    route_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Trip",
+      ref: "Route",
       required: true,
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
       required: true,
+    },
+    startlocation: {
+      type: String,
+      default: null,
+    },
+    endlocation: {
+      type: String,
+      default: null,
     }
+
   },
   {
     collection: "Ticket",

@@ -78,6 +78,7 @@ class RESET_CONTENT extends SuccessResponse {
 }
 
 module.exports = {
+  SuccessResponse,
   OK,
   CREATED,
   ACCEPTED,

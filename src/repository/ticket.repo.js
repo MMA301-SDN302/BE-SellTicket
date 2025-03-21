@@ -3,7 +3,7 @@ const Ticket = require("../models/BusCompany/Ticket");
 const Trip = require("../models/BusCompany/Trip");
 
 const getAllTickets = async () => {
-  return await Ticket.find().populate("trip_id");
+  return await Ticket.find().populate("route_id");
 };
 
 const getTicketById = async (_id) => {
@@ -38,7 +38,6 @@ const cancelTicket = async (id) => {
     await trip.save();
   }
 
-  // Cập nhật trạng thái vé thay vì xóa
   ticket.ticket_status = "cancelled";
   await ticket.save();
 
@@ -62,10 +61,29 @@ const autoCancelUnpaidTickets = async () => {
   }
 };
 
+<<<<<<< HEAD
+const getTicketsByRoute = async (routeId) => {
+  return await Ticket.find({ route_id: routeId }).lean();
+};
+
+const getLastTicketNo = async () => {
+  const lastTicket = await Ticket.findOne().sort({ ticket_No: -1 }).lean();
+  return lastTicket ? parseInt(lastTicket.ticket_No, 10) : 100000;
+};
+
+=======
+>>>>>>> origin/develop
 module.exports = {
   getAllTickets,
   getTicketById,
   createTicket,
   cancelTicket,
+<<<<<<< HEAD
+  autoCancelUnpaidTickets,
+  getTicketsByRoute,
+  createManyTickets,
+  getLastTicketNo,
+=======
   autoCancelUnpaidTickets
+>>>>>>> origin/develop
 };
