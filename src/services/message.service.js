@@ -226,31 +226,17 @@ const markMessageAsRead = async (messageId) => {
 };
 
 const getUserConversations = async (userId) => {
-  try {
-    console.log('Fetching conversations for userId:', userId);
-    
-    // Validate userId is a valid MongoDB ObjectId
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      console.error(`Invalid userId format: ${userId}`);
-      throw new BadRequestError("Invalid user ID format");
-    }
-    
-    const conversations = await Conversation.find({
-      participants: userId
-    }).populate({
-      path: 'participants',
-      select: 'firstName lastName avatar isOnline'
-    }).populate({
-      path: 'lastMessage',
-      select: 'content createdAt read senderId receiverId'
-    }).sort({ updatedAt: -1 });
-    
-    console.log(`Found ${conversations.length} conversations for userId: ${userId}`);
-    return conversations;
-  } catch (error) {
-    console.error('Error in getUserConversations:', error);
-    throw error;
-  }
+  const conversations = await Conversation.find({
+    participants: userId
+  }).populate({
+    path: 'participants',
+    select: 'firstName lastName avatar isOnline'
+  }).populate({
+    path: 'lastMessage',
+    select: 'content createdAt read senderId receiverId'
+  }).sort({ updatedAt: -1 });
+
+  return conversations;
 };
 
 const getAdminConversations = async (adminId) => {

@@ -40,36 +40,6 @@ io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
   const role = socket.handshake.query.role || "user";
   
-  if (userId != "undefined") {
-    const existingUser = userSocketMap[userId];
-    console.log("User connected:", userId, "Role:", role);
-
-    if (existingUser) {
-      io.to(existingUser).emit("forceDisconnect");
-      delete userSocketMap[userId];
-    }
-    userSocketMap[userId] = socket.id;
-  }
-  
-  io.emit("getOnlineUsers", Object.keys(userSocketMap));
-  
-  socket.on("sendMessage", async ({ senderId, receiverId, content }) => {
-    try {
-      console.log("Message received:", { senderId, receiverId, content });
-      
-      const receiverSocketId = getReceiverSocketId(receiverId);
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("receiveMessage", {
-          senderId,
-          receiverId,
-          content,
-          createdAt: new Date()
-        });
-      }
-    } catch (error) {
-      console.error("Error in sendMessage event:", error);
-    }
-  });
   console.log(`New socket connection: ${socket.id} for user ${userId} with role ${role}`);
   
   if (userId && userId !== "undefined") {
