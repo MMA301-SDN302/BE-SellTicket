@@ -23,26 +23,52 @@ const setupSocket = (messageService) => {
     if (userId && userId !== "undefined") {
       if (role === "admin") {
         adminSocketMap[userId] = socket.id;
-        console.log('Admin socket mapped:', {userId, socketId: socket.id});
       } else {
         userSocketMap[userId] = socket.id;
-        console.log('User socket mapped:', {userId, socketId: socket.id});
       }
+      
+      // Update the user's isOnline status in database
+      try {
+        await User.findByIdAndUpdate(userId, { isOnline: true });
+      } catch (error) {
+        console.error(`Error updating online status for ${userId}:`, error);
+      }
+      
+      // Broadcast online users to all connected clients
+      broadcastOnlineUsers();
     }
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log(`Socket disconnected - UserId: ${userId}, Role: ${role}`);
       if (role === "admin") {
         delete adminSocketMap[userId];
       } else {
         delete userSocketMap[userId];
       }
+      
+      // Update the user's isOnline status in database
+      try {
+        await User.findByIdAndUpdate(userId, { isOnline: false });
+      } catch (error) {
+        console.error(`Error updating online status for ${userId}:`, error);
+      }
+      
+      // Broadcast updated online users to all connected clients
+      broadcastOnlineUsers();
     });
 
-    io.emit("getOnlineUsers", {
-      users: Object.keys(userSocketMap),
-      admin: Object.keys(adminSocketMap),
-    });
+    // Function to broadcast online users
+    function broadcastOnlineUsers() {
+      const { getOnlineUsers } = require("../config/socket.config");
+      if (typeof getOnlineUsers === 'function') {
+        getOnlineUsers();
+      } else {
+        io.emit("getOnlineUsers", {
+          users: Object.keys(userSocketMap),
+          admin: Object.keys(adminSocketMap),
+        });
+      }
+    }
 
     // Initialize conversation for new users
     socket.on("initConversation", async ({ userId }) => {
@@ -81,8 +107,6 @@ const setupSocket = (messageService) => {
 
     socket.on("sendMessage", async (messageData) => {
       try {
-        console.log("Message received:", messageData);
-
         // Đảm bảo messageData có đúng format
         const { senderId, receiverId, content } = messageData;
 
@@ -128,8 +152,6 @@ const setupSocket = (messageService) => {
 
     socket.on("adminConnect", async ({ adminId }) => {
       try {
-        console.log("Admin connected, fetching conversations for:", adminId);
-        
         // Xác định nếu người dùng này thực sự là admin
         const adminUser = await User.findById(adminId);
         if (!adminUser || !adminUser.role || !adminUser.role.includes('admin')) {
@@ -137,13 +159,16 @@ const setupSocket = (messageService) => {
           return;
         }
         
+        // Ensure admin is properly mapped
+        adminSocketMap[adminId] = socket.id;
+        
         // Lấy tất cả conversations cho admin
         const conversations = await Conversation.find({
           participants: { $in: [adminId] }
         })
         .populate({
           path: 'participants',
-          select: 'firstName lastName avatar isOnline role'
+          select: 'firstName lastName avatar isOnline role phoneNumber'
         })
         .populate({
           path: 'lastMessage',
@@ -153,10 +178,40 @@ const setupSocket = (messageService) => {
           }
         })
         .sort({ updatedAt: -1 });
+        
+        // Make sure we have conversations
+        if (!conversations || conversations.length === 0) {
+          socket.emit("adminConversations", []);
+          // Also send current online users
+          socket.emit("getOnlineUsers", {
+            users: Object.keys(userSocketMap),
+            admin: Object.keys(adminSocketMap),
+          });
+          return;
+        }
+
+        // Update isOnline status for each participant based on the current socket connections
+        const conversationsWithOnlineStatus = conversations.map(conv => {
+          const convObj = conv.toObject();
+          if (convObj.participants) {
+            convObj.participants = convObj.participants.map(participant => {
+              // If participant is the admin, skip
+              if (participant._id.toString() === adminId) return participant;
+              
+              // Check if user is in userSocketMap (meaning they're online)
+              const isUserOnline = !!userSocketMap[participant._id.toString()];
+              return {
+                ...participant,
+                isOnline: isUserOnline
+              };
+            });
+          }
+          return convObj;
+        });
 
         // Tính toán số tin nhắn chưa đọc cho mỗi hội thoại
         const conversationsWithUnread = await Promise.all(
-          conversations.map(async (conv) => {
+          conversationsWithOnlineStatus.map(async (conv) => {
             // Đếm số tin nhắn chưa đọc (gửi cho admin nhưng chưa đọc)
             const unreadCount = await Message.countDocuments({
               _id: { $in: conv.messages },
@@ -164,14 +219,20 @@ const setupSocket = (messageService) => {
               read: false
             });
 
-            // Chuyển đổi thành đối tượng thuần túy để có thể thêm thuộc tính
-            const convObj = conv.toObject();
-            convObj.unreadCount = unreadCount;
-            return convObj;
+            // Thêm thuộc tính unreadCount
+            conv.unreadCount = unreadCount;
+            return conv;
           })
         );
 
+        // Emit the conversations to the admin
         socket.emit("adminConversations", conversationsWithUnread);
+        
+        // Also send current online users
+        socket.emit("getOnlineUsers", {
+          users: Object.keys(userSocketMap),
+          admin: Object.keys(adminSocketMap),
+        });
       } catch (error) {
         console.error("Error loading admin conversations:", error);
         socket.emit("messageError", { error: error.message });
@@ -184,11 +245,6 @@ const setupSocket = (messageService) => {
 
 // Function lấy socket ID của một user/admin
 const getReceiverSocketId = (receiverId) => {
-  console.log('Current socket maps:', {
-    adminSockets: adminSocketMap,
-    userSockets: userSocketMap
-  });
-  
   // Check admin sockets first
   const adminSocket = adminSocketMap[receiverId];
   if (adminSocket) return adminSocket;
@@ -197,8 +253,7 @@ const getReceiverSocketId = (receiverId) => {
   const userSocket = userSocketMap[receiverId];
   if (userSocket) return userSocket;
   
-  console.log('No socket found for receiver:', receiverId);
   return null;
 };
 
-module.exports = { setupSocket, getReceiverSocketId };
+module.exports = { setupSocket, getReceiverSocketId, userSocketMap, adminSocketMap };

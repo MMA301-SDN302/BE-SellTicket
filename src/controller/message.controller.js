@@ -12,16 +12,12 @@ class MessageController {
         throw new BadRequestError("User ID is required");
       }
       
-      console.log(`Controller: Getting conversations for user ${userId}`);
       const conversations = await MessageService.getUserConversations(userId);
-      
-      console.log(`Controller: Successfully retrieved ${conversations.length} conversations`);
       return new SuccessResponse({
         message: "Get user conversations successfully",
         metadata: conversations,
       }).send(res);
     } catch (error) {
-      console.error("Controller error in getUserConversations:", error);
       next(error);
     }
   };
@@ -73,11 +69,11 @@ class MessageController {
         throw new BadRequestError("Sender ID, Receiver ID, and content are required");
       }
       
-      const message = await MessageService.sendMessage({
+      const message = await MessageService.sendMessage(
         senderId,
         receiverId,
-        content,
-      });
+        content
+      );
       
       return new SuccessResponse({
         message: "Message sent successfully",
