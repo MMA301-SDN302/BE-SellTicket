@@ -11,5 +11,6 @@ router.use("/trips", require("./trip.router"))
 router.use("/seat", require("./seat.router"))
 router.use("/profile", require("./user.router"))
 router.use("/message", require("./message.router"))
+router.use("/payment", require("./payment.router"))
 
 module.exports = router;
