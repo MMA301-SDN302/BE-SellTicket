@@ -61,7 +61,6 @@ const autoCancelUnpaidTickets = async () => {
   }
 };
 
-<<<<<<< HEAD
 const getTicketsByRoute = async (routeId) => {
   return await Ticket.find({ route_id: routeId }).lean();
 };
@@ -70,20 +69,13 @@ const getLastTicketNo = async () => {
   const lastTicket = await Ticket.findOne().sort({ ticket_No: -1 }).lean();
   return lastTicket ? parseInt(lastTicket.ticket_No, 10) : 100000;
 };
-
-=======
->>>>>>> origin/develop
 module.exports = {
   getAllTickets,
   getTicketById,
   createTicket,
   cancelTicket,
-<<<<<<< HEAD
   autoCancelUnpaidTickets,
   getTicketsByRoute,
   createManyTickets,
   getLastTicketNo,
-=======
-  autoCancelUnpaidTickets
->>>>>>> origin/develop
 };
