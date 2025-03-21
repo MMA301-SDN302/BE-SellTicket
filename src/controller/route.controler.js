@@ -66,7 +66,11 @@ const getSearchRoutes = async (req, res) => {
     console.error("getSearchRoutes error:", error);
 
     if (error instanceof BadRequestError) {
-      return error.send(req, res);
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: error.message || "Bad Request",
+      });
     }
 
     return res.status(500).json({
@@ -86,10 +90,14 @@ const getLocationName = async (req, res) => {
 
     return new OK({ message: "Route search location result OK", metadata: result }).send(req, res);
   } catch (error) {
-    console.error("getSearchRoutes error:", error);
+    console.error("getLocationName error:", error);
 
     if (error instanceof BadRequestError) {
-      return error.send(req, res);
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: error.message || "Bad Request",
+      });
     }
 
     return res.status(500).json({
