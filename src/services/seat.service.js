@@ -27,7 +27,6 @@ const getSeatsByRoute = async (routeId, startLocationName, endLocationName) => {
     }
 
     const bookedTickets = await reposTicket.getTicketsByRoute(routeId);
-    console.log("Booked Tickets:", bookedTickets);
 
     const updatedSeats = seats.map(seat => {
       const bookedTicket = bookedTickets.find(ticket => {
@@ -115,7 +114,7 @@ const getSeatStatus = async (routeId, seatId) => {
   }
 };
 
-const createTicket = async (routeId, seatIds, userId, from, to, price, passenger) => {
+const createTicket = async (routeId, seatIds, userId, from, to, price) => {
   try {
     const route = await BusRoute.findById(routeId).populate("trip");
     if (!route || !route.car) {
@@ -136,20 +135,23 @@ const createTicket = async (routeId, seatIds, userId, from, to, price, passenger
       throw new BadRequestError(`Ghế sau đã được đặt: ${unavailableSeats.join(", ")}`);
     }
 
-    let lastTicketNo = await reposTicket.getLastTicketNo();
+    let lastTicketNo = (await reposTicket.getLastTicketNo()) || 1000;
 
-    const ticketsData = seatIds.map(seatId => ({
-      ticket_No: (++lastTicketNo).toString(),
-      route_id: routeId,
-      seat_id: seatId,
-      user_id: userId,
-      startlocation: from,
-      endlocation: to,
-      ticket_price: price, 
-      passenger: "passenger", 
-      ticket_status: "pending",
-      ticket_seat: seats.find(s => s._id.toString() === seatId).seatNumber,
-    }));
+    const ticketsData = seatIds.map((seatId, index) => {
+      const seat = seats.find(s => s._id.toString() === seatId) || {};
+      return {
+        ticket_No: (lastTicketNo + index + 1).toString(),
+        route_id: routeId,
+        seat_id: seatId,
+        user_id: userId,
+        startlocation: from || "Unknown Start Location",
+        endlocation: to || "Unknown End Location",
+        ticket_price: price || 0,
+        passenger: "passenger",
+        ticket_status: "pending",
+        ticket_seat: seat.seatNumber || "Unknown Seat",
+      };
+    });
 
     const tickets = await reposTicket.createManyTickets(ticketsData);
 
@@ -159,8 +161,6 @@ const createTicket = async (routeId, seatIds, userId, from, to, price, passenger
     throw error instanceof BadRequestError ? error : new InternalServerError("Có lỗi xảy ra khi tạo vé.");
   }
 };
-
-
 
 module.exports = {
   getSeatsByRoute,
