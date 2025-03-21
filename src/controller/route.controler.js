@@ -81,10 +81,10 @@ const getLocationName = async (req, res) => {
   try {
     const startLocation = decodeURIComponent(req.query.startLocation);
     const endLocation = decodeURIComponent(req.query.endLocation);
-    const date = decodeURIComponent(req.query.date);
-    const cars = await service.getStopMap(startLocation, endLocation, date);
+    const label = decodeURIComponent(req.query.date);
+    const result = await service.getStopMap(startLocation, endLocation, label);
 
-    return new OK({ message: "Route search result OK", metadata: cars }).send(req, res);
+    return new OK({ message: "Route search location result OK", metadata: result }).send(req, res);
   } catch (error) {
     console.error("getSearchRoutes error:", error);
 
