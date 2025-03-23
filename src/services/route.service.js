@@ -169,24 +169,28 @@ const createDailyRouter = async (trip) => {
 const getStopMap = async (startLocation, endLocation, label) => {
   try {
     const stopMapData = await StopMap.findOne().lean();
-
     if (!stopMapData || !stopMapData.stops) {
       return [];
     }
 
     let stops = stopMapData.stops;
+    const labelNum = parseInt(label, 10);
+    const startLocTrimmed = startLocation ? startLocation.trim().toLowerCase() : "";
+    const endLocTrimmed = endLocation ? endLocation.trim().toLowerCase() : "";
 
-    if (label === 1 && startLocation) {
+    if (labelNum === 1 && startLocTrimmed) {
       stops = stops.filter(
         (stop) =>
-          stop.stop_name.toLowerCase().includes(startLocation.toLowerCase()) &&
-          stop.stop_name.toLowerCase() !== startLocation.toLowerCase()
+          stop.stop_name.toLowerCase().includes(startLocTrimmed) && 
+          stop.stop_name.toLowerCase() !== startLocTrimmed && 
+          (!endLocTrimmed || stop.stop_name.toLowerCase() !== endLocTrimmed) 
       );
-    } else if (label === 2 && endLocation) {
+    } else if (labelNum === 2 && endLocTrimmed) {
       stops = stops.filter(
         (stop) =>
-          stop.stop_name.toLowerCase().includes(endLocation.toLowerCase()) &&
-          stop.stop_name.toLowerCase() !== endLocation.toLowerCase()
+          stop.stop_name.toLowerCase().includes(endLocTrimmed) && 
+          stop.stop_name.toLowerCase() !== endLocTrimmed && 
+          (!startLocTrimmed || stop.stop_name.toLowerCase() !== startLocTrimmed) 
       );
     }
 

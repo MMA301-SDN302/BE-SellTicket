@@ -83,12 +83,22 @@ const getSearchRoutes = async (req, res) => {
 
 const getLocationName = async (req, res) => {
   try {
-    const startLocation = decodeURIComponent(req.query.startLocation);
-    const endLocation = decodeURIComponent(req.query.endLocation);
-    const label = decodeURIComponent(req.query.date);
+    const { startLocation, endLocation, label } = req.query.params;
+    console.log("getLocationName:", startLocation, endLocation, label);
+    if (!label) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Missing required parameters: startLocation, endLocation, or label",
+      });
+    }
+
     const result = await service.getStopMap(startLocation, endLocation, label);
 
-    return new OK({ message: "Route search location result OK", metadata: result }).send(req, res);
+    return new OK({
+      message: "Route search location result OK",
+      metadata: result,
+    }).send(req, res);
   } catch (error) {
     console.error("getLocationName error:", error);
 

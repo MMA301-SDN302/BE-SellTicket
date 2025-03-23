@@ -1,3 +1,4 @@
+const { random } = require("lodash");
 const { NotFoundError } = require("../core/response/error.response");
 const Ticket = require("../models/BusCompany/Ticket");
 const Trip = require("../models/BusCompany/Trip");
@@ -67,7 +68,7 @@ const getTicketsByRoute = async (routeId) => {
 
 const getLastTicketNo = async () => {
   const lastTicket = await Ticket.findOne().sort({ ticket_No: -1 }).lean();
-  return lastTicket ? parseInt(lastTicket.ticket_No, 10) : 100000;
+  return lastTicket ? parseInt(lastTicket.ticket_No, 10) : random(1000, 99999);
 };
 module.exports = {
   getAllTickets,
