@@ -3,8 +3,10 @@ const { NotFoundError } = require("../core/response/error.response");
 const Ticket = require("../models/BusCompany/Ticket");
 const Trip = require("../models/BusCompany/Trip");
 
-const getAllTickets = async () => {
-  return await Ticket.find().populate("route_id");
+const getAllTickets = async (id) => {
+  return await Ticket.find({
+    user_id: id,
+  }).populate("route_id");
 };
 
 const getTicketById = async (_id) => {
@@ -13,8 +15,7 @@ const getTicketById = async (_id) => {
 
 const createTicket = async (data) => {
   const trip = await Trip.findById(data.trip_id);
-  if (!trip)
-    throw new NotFoundError("Không tìm thấy tuyến");
+  if (!trip) throw new NotFoundError("Không tìm thấy tuyến");
   if (trip.availableSeats <= 0) throw new NotFoundError("No available seats");
 
   trip.availableSeats -= 1;
@@ -40,8 +41,6 @@ const cancelTicket = async (id) => {
   return ticket;
 };
 
-
-
 // Tự động hủy vé chưa thanh toán sau 15 phút
 const autoCancelUnpaidTickets = async () => {
   const expirationTime = new Date();
@@ -49,7 +48,7 @@ const autoCancelUnpaidTickets = async () => {
 
   const ticketsToCancel = await Ticket.find({
     ticket_status: "pending",
-    createdAt: { $lt: expirationTime }
+    createdAt: { $lt: expirationTime },
   });
 
   for (let ticket of ticketsToCancel) {

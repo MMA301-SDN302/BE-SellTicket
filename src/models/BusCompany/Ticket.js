@@ -11,7 +11,6 @@ const ticketSchema = new mongoose.Schema(
     ticket_No: {
       type: String,
       required: true,
-      unique: true,
     },
     passenger: { type: String, required: true },
 
@@ -45,8 +44,7 @@ const ticketSchema = new mongoose.Schema(
     endlocation: {
       type: String,
       default: null,
-    }
-
+    },
   },
   {
     collection: "Ticket",

@@ -2,8 +2,8 @@ const { BadRequestError } = require("../core/response/error.response.js");
 const Ticket = require("../models/BusCompany/Ticket.js");
 const ticketRepository = require("../repository/ticket.repo.js");
 
-const getAllTickets = async () => {
-  return await ticketRepository.getAllTickets();
+const getAllTickets = async (id) => {
+  return await ticketRepository.getAllTickets(id);
 };
 
 const getTicketById = async (_id) => {

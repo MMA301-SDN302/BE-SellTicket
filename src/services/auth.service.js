@@ -75,6 +75,7 @@ const login = async ({ phoneNumber, password, traceId }) => {
       gender: user.sex,
       dateOfBirth: user.dateOfBirth,
       avatar: user.avatar,
+      email: user.email,
       role: user.role || [],
     },
     token: {
@@ -103,7 +104,7 @@ const createTokenService = async (userId, mobilePhone) => {
   });
   return { accessToken, refreshToken };
 };
-const logout = async () => { };
+const logout = async () => {};
 
 const signUp = async ({
   password,
@@ -288,12 +289,12 @@ const resendOtp = async ({ mobilePhone, sendType, traceId }) => {
     { requestId: traceId },
     {
       mobilePhone,
-      type,
+      sendType,
     },
   ]);
   const isValid = await isMissingObjectData({
     mobilePhone,
-    type,
+    sendType,
   });
   if (isValid.length > 0) {
     throw new BadRequestError(`Missing ${isValid}`, ErrorCodes.MISSING_FIELD);
@@ -316,8 +317,7 @@ const resendOtp = async ({ mobilePhone, sendType, traceId }) => {
     mobile_phone: mobilePhone,
     otp_sign: sign,
   });
-  // send OTP to phone number
-  //await sendOTP(mobilePhone, OtpNumber);
+  await sendOTP(mobilePhone, OtpNumber);
 
   return {
     mobilePhone: mobilePhone,
@@ -402,7 +402,14 @@ const refreshToken = async ({ refreshToken, traceId }) => {
     refreshToken: newRefreshToken,
   };
 };
-const changePassword = async ({ password, newPassword, confirmPassword, userId, mobilePhone, traceId }) => {
+const changePassword = async ({
+  password,
+  newPassword,
+  confirmPassword,
+  userId,
+  mobilePhone,
+  traceId,
+}) => {
   logger.log("AuthService", [
     "ChangePassword",
     { requestId: traceId },
@@ -440,7 +447,10 @@ const changePassword = async ({ password, newPassword, confirmPassword, userId, 
   const isMatch = await comparePassword(password, user.password);
 
   if (!isMatch) {
-    throw new BadRequestError("Old password is wrong ", ErrorCodes.INVALID_CREDENTIALS);
+    throw new BadRequestError(
+      "Old password is wrong ",
+      ErrorCodes.INVALID_CREDENTIALS
+    );
   }
   const newPasswordHash = await hashPassword(newPassword);
   await updatePassword(userId, newPasswordHash);
@@ -454,5 +464,6 @@ module.exports = {
   resetPassword,
   verifyOtp,
   resendOtp,
-  refreshToken, changePassword
+  refreshToken,
+  changePassword,
 };

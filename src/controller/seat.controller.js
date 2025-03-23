@@ -57,12 +57,12 @@ const getSeatStatusController = async (req, res) => {
 
 const createTicketController = async (req, res) => {
   try {
-    let { routeId, seatIds, userId, from, to, price } = req.body; 
+    let { routeId, seatIds, from, to, price } = req.body; 
     let missingFields = [];
+    let userId = req.user.userId;
 
     if (!routeId) missingFields.push("routeId");
     if (!Array.isArray(seatIds) || seatIds.length === 0) missingFields.push("seatIds");
-    if (!userId) userId = crypto.randomBytes(12).toString("hex");
     if (!from) missingFields.push("from");
     if (!to) missingFields.push("to");
     if (price === undefined || price === null) missingFields.push("price"); 

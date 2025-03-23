@@ -6,18 +6,18 @@ const {
 } = require("../core/response/error.response.js");
 
 const getAllTickets = async (req, res, next) => {
-  const tickets = await service.getAllTickets();
+  const tickets = await service.getAllTickets(req.user.userId);
   if (!tickets) {
-    return res.status(404).json({ status: "error", code: 404, message: "No tickets found" });
+    return res
+      .status(404)
+      .json({ status: "error", code: 404, message: "No tickets found" });
   }
 
   return new OK({
     message: "Routes retrieved successfully",
     metadata: tickets || [],
   }).send(req, res);
-
 };
-
 
 const getTicketById = async (req, res) => {
   const ticket = await service.getTicketById(req.params._id);
