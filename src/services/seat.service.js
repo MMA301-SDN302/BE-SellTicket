@@ -2,6 +2,7 @@ const Seat = require("../models/BusCompany/Seat.js");
 const BusRoute = require("../models/BusCompany/Route.js");
 const { BadRequestError, InternalServerError } = require("../core/response/error.response.js");
 const reposTicket = require("../repository/ticket.repo.js");
+const { random } = require("lodash");
 
 const getSeatsByRoute = async (routeId, startLocationName, endLocationName) => {
   try {
@@ -25,7 +26,6 @@ const getSeatsByRoute = async (routeId, startLocationName, endLocationName) => {
     if (!seats.length) {
       throw new BadRequestError("Không tìm thấy ghế nào trên xe này.");
     }
-
     const bookedTickets = await reposTicket.getTicketsByRoute(routeId);
 
     const updatedSeats = seats.map(seat => {
@@ -132,10 +132,12 @@ const createTicket = async (routeId, seatIds, userId, from, to, price) => {
     );
 
     if (unavailableSeats.length) {
-      throw new BadRequestError(`Ghế sau đã được đặt: ${unavailableSeats.join(", ")}`);
+      const seats = await Seat.find({ _id: { $in: unavailableSeats } }, "seatNumber");
+      const seatNames = seats.map(seat => seat.seatNumber);
+      throw new BadRequestError(`Ghế sau đã được đặt: ${seatNames.join(", ")}`);
     }
 
-    let lastTicketNo = (await reposTicket.getLastTicketNo()) || 1000;
+    let lastTicketNo = (await reposTicket.getLastTicketNo());
 
     const ticketsData = seatIds.map((seatId, index) => {
       const seat = seats.find(s => s._id.toString() === seatId) || {};

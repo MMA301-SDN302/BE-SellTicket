@@ -1,7 +1,7 @@
 const seatService = require("../services/seat.service.js");
 const crypto = require("crypto");
 const { OK } = require("../core/response/success.response.js");
-const { BadRequestError, InternalServerError } = require("../core/response/error.response.js");
+const { InternalServerError } = require("../core/response/error.response.js");
 
 const getCarSeatController = async (req, res) => {
   try {
@@ -75,8 +75,6 @@ const createTicketController = async (req, res) => {
       });
     }
 
-    console.log("Dữ liệu hợp lệ:", { routeId, seatIds, userId, from, to, price });
-
     const ticket = await seatService.createTicket(routeId, seatIds, userId, from, to, price);
 
     return new OK({ message: "Tạo vé thành công", metadata: ticket }).send(req, res);
@@ -86,7 +84,7 @@ const createTicketController = async (req, res) => {
     return res.status(500).json({
       status: "error",
       code: 500,
-      message: "Lỗi máy chủ nội bộ",
+      message: error.message,
     });
   }
 };
