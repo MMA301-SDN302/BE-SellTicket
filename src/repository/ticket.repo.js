@@ -62,8 +62,9 @@ const getTicketsByRoute = async (routeId) => {
 
 const getLastTicketNo = async () => {
   const lastTicket = await Ticket.findOne().sort({ ticket_No: -1 }).lean();
-  return lastTicket ? parseInt(lastTicket.ticket_No, 10) : random(1000, 99999);
-};
+  return lastTicket ? parseInt(lastTicket.ticket_No, 10) : Math.floor(Math.random() * (99999 - 1000 + 1)) + 1000;
+;
+}; 
 module.exports = {
   getAllTickets,
   getTicketById,
